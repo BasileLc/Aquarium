@@ -1,0 +1,16 @@
+# Modèle d'unité systemd — install.sh remplace %USER% et %REPO% puis
+# l'installe dans /etc/systemd/system/aquarium-poller.service.
+[Unit]
+Description=Poller Apex vers GitHub (suivi aquarium)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=%USER%
+ExecStart=/usr/bin/python3 %REPO%/poller/apex_poller.py --config %REPO%/poller/config.ini
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

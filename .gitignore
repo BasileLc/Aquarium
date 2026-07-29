@@ -1,0 +1,6 @@
+# Config locale du poller (contient l'IP et d'éventuels identifiants Apex)
+poller/config.ini
+
+__pycache__/
+*.pyc
+.DS_Store

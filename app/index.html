@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Aquarium</title>
+  <meta name="description" content="Suivi des paramètres de l'aquarium (Neptune Apex)">
+  <meta name="theme-color" content="#0c141d">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>🐠 Aquarium</h1>
+    <button type="button" id="refresh-btn" class="icon-btn" title="Actualiser les données" aria-label="Actualiser">⟳</button>
+  </header>
+  <main id="view" class="view"></main>
+  <nav class="tabbar">
+    <a href="#/" data-route="home"><span class="tab-icon">🏠</span><span>Accueil</span></a>
+    <a href="#/charts" data-route="charts"><span class="tab-icon">📈</span><span>Graphiques</span></a>
+    <a href="#/events" data-route="events"><span class="tab-icon">📅</span><span>Événements</span></a>
+    <a href="#/settings" data-route="settings"><span class="tab-icon">⚙️</span><span>Réglages</span></a>
+  </nav>
+  <div id="toast"></div>
+  <script src="vendor/chart.umd.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
