@@ -29,6 +29,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+        with:
+          # Active GitHub Pages (source « GitHub Actions ») au premier
+          # déploiement si ce n'est pas déjà fait dans les réglages du repo.
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: app
