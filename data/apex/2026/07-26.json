@@ -1,0 +1,1178 @@
+[
+ {
+  "parameter": "temp",
+  "value": -6.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T14:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.18,
+  "unit": "pH",
+  "timestamp": "2026-07-26T14:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 0,
+  "unit": "mV",
+  "timestamp": "2026-07-26T14:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": -6.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T14:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.17,
+  "unit": "pH",
+  "timestamp": "2026-07-26T14:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 0,
+  "unit": "mV",
+  "timestamp": "2026-07-26T14:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": -6.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T15:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.19,
+  "unit": "pH",
+  "timestamp": "2026-07-26T15:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 0,
+  "unit": "mV",
+  "timestamp": "2026-07-26T15:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": -6.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T15:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.21,
+  "unit": "pH",
+  "timestamp": "2026-07-26T15:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 0,
+  "unit": "mV",
+  "timestamp": "2026-07-26T15:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T15:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.22,
+  "unit": "pH",
+  "timestamp": "2026-07-26T15:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 0,
+  "unit": "mV",
+  "timestamp": "2026-07-26T15:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.67,
+  "unit": "°C",
+  "timestamp": "2026-07-26T15:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.23,
+  "unit": "pH",
+  "timestamp": "2026-07-26T15:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 0,
+  "unit": "mV",
+  "timestamp": "2026-07-26T15:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.56,
+  "unit": "°C",
+  "timestamp": "2026-07-26T15:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.21,
+  "unit": "pH",
+  "timestamp": "2026-07-26T15:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 0,
+  "unit": "mV",
+  "timestamp": "2026-07-26T15:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-26T15:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.24,
+  "unit": "pH",
+  "timestamp": "2026-07-26T15:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 0,
+  "unit": "mV",
+  "timestamp": "2026-07-26T15:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-26T16:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.25,
+  "unit": "pH",
+  "timestamp": "2026-07-26T16:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 0,
+  "unit": "mV",
+  "timestamp": "2026-07-26T16:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 26.0,
+  "unit": "°C",
+  "timestamp": "2026-07-26T16:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.26,
+  "unit": "pH",
+  "timestamp": "2026-07-26T16:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 0,
+  "unit": "mV",
+  "timestamp": "2026-07-26T16:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 26.0,
+  "unit": "°C",
+  "timestamp": "2026-07-26T16:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 1.58,
+  "unit": "pH",
+  "timestamp": "2026-07-26T16:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 0,
+  "unit": "mV",
+  "timestamp": "2026-07-26T16:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 26.06,
+  "unit": "°C",
+  "timestamp": "2026-07-26T16:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 1.58,
+  "unit": "pH",
+  "timestamp": "2026-07-26T16:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 0,
+  "unit": "mV",
+  "timestamp": "2026-07-26T16:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 26.11,
+  "unit": "°C",
+  "timestamp": "2026-07-26T16:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 1.58,
+  "unit": "pH",
+  "timestamp": "2026-07-26T16:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 0,
+  "unit": "mV",
+  "timestamp": "2026-07-26T16:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 26.11,
+  "unit": "°C",
+  "timestamp": "2026-07-26T16:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.25,
+  "unit": "pH",
+  "timestamp": "2026-07-26T16:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 158,
+  "unit": "mV",
+  "timestamp": "2026-07-26T16:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 26.17,
+  "unit": "°C",
+  "timestamp": "2026-07-26T17:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.42,
+  "unit": "pH",
+  "timestamp": "2026-07-26T17:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 151,
+  "unit": "mV",
+  "timestamp": "2026-07-26T17:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 26.11,
+  "unit": "°C",
+  "timestamp": "2026-07-26T17:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.42,
+  "unit": "pH",
+  "timestamp": "2026-07-26T17:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 155,
+  "unit": "mV",
+  "timestamp": "2026-07-26T17:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-26T17:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.42,
+  "unit": "pH",
+  "timestamp": "2026-07-26T17:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 156,
+  "unit": "mV",
+  "timestamp": "2026-07-26T17:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-26T17:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.42,
+  "unit": "pH",
+  "timestamp": "2026-07-26T17:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 159,
+  "unit": "mV",
+  "timestamp": "2026-07-26T17:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T17:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.42,
+  "unit": "pH",
+  "timestamp": "2026-07-26T17:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 160,
+  "unit": "mV",
+  "timestamp": "2026-07-26T17:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T17:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.43,
+  "unit": "pH",
+  "timestamp": "2026-07-26T17:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 162,
+  "unit": "mV",
+  "timestamp": "2026-07-26T17:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T18:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.43,
+  "unit": "pH",
+  "timestamp": "2026-07-26T18:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 163,
+  "unit": "mV",
+  "timestamp": "2026-07-26T18:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T18:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.43,
+  "unit": "pH",
+  "timestamp": "2026-07-26T18:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 164,
+  "unit": "mV",
+  "timestamp": "2026-07-26T18:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T18:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.43,
+  "unit": "pH",
+  "timestamp": "2026-07-26T18:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 166,
+  "unit": "mV",
+  "timestamp": "2026-07-26T18:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T18:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.43,
+  "unit": "pH",
+  "timestamp": "2026-07-26T18:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 167,
+  "unit": "mV",
+  "timestamp": "2026-07-26T18:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T18:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.43,
+  "unit": "pH",
+  "timestamp": "2026-07-26T18:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 169,
+  "unit": "mV",
+  "timestamp": "2026-07-26T18:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T18:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T18:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 171,
+  "unit": "mV",
+  "timestamp": "2026-07-26T18:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T19:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T19:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 172,
+  "unit": "mV",
+  "timestamp": "2026-07-26T19:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T19:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T19:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 174,
+  "unit": "mV",
+  "timestamp": "2026-07-26T19:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T19:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.45,
+  "unit": "pH",
+  "timestamp": "2026-07-26T19:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 176,
+  "unit": "mV",
+  "timestamp": "2026-07-26T19:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T19:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T19:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 178,
+  "unit": "mV",
+  "timestamp": "2026-07-26T19:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T19:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T19:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 179,
+  "unit": "mV",
+  "timestamp": "2026-07-26T19:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T19:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T19:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 181,
+  "unit": "mV",
+  "timestamp": "2026-07-26T19:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T20:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.46,
+  "unit": "pH",
+  "timestamp": "2026-07-26T20:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 183,
+  "unit": "mV",
+  "timestamp": "2026-07-26T20:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T20:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.45,
+  "unit": "pH",
+  "timestamp": "2026-07-26T20:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 184,
+  "unit": "mV",
+  "timestamp": "2026-07-26T20:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T20:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.45,
+  "unit": "pH",
+  "timestamp": "2026-07-26T20:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 185,
+  "unit": "mV",
+  "timestamp": "2026-07-26T20:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T20:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.45,
+  "unit": "pH",
+  "timestamp": "2026-07-26T20:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 187,
+  "unit": "mV",
+  "timestamp": "2026-07-26T20:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T20:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T20:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 189,
+  "unit": "mV",
+  "timestamp": "2026-07-26T20:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T20:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T20:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 190,
+  "unit": "mV",
+  "timestamp": "2026-07-26T20:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T21:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T21:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 192,
+  "unit": "mV",
+  "timestamp": "2026-07-26T21:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T21:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T21:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 194,
+  "unit": "mV",
+  "timestamp": "2026-07-26T21:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T21:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T21:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 196,
+  "unit": "mV",
+  "timestamp": "2026-07-26T21:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T21:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T21:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 197,
+  "unit": "mV",
+  "timestamp": "2026-07-26T21:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T21:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T21:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 199,
+  "unit": "mV",
+  "timestamp": "2026-07-26T21:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T21:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T21:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 200,
+  "unit": "mV",
+  "timestamp": "2026-07-26T21:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T22:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T22:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 201,
+  "unit": "mV",
+  "timestamp": "2026-07-26T22:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T22:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T22:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 202,
+  "unit": "mV",
+  "timestamp": "2026-07-26T22:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T22:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T22:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 204,
+  "unit": "mV",
+  "timestamp": "2026-07-26T22:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T22:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T22:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 205,
+  "unit": "mV",
+  "timestamp": "2026-07-26T22:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T22:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T22:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 206,
+  "unit": "mV",
+  "timestamp": "2026-07-26T22:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-26T22:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T22:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 208,
+  "unit": "mV",
+  "timestamp": "2026-07-26T22:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T23:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T23:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 209,
+  "unit": "mV",
+  "timestamp": "2026-07-26T23:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-26T23:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T23:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 211,
+  "unit": "mV",
+  "timestamp": "2026-07-26T23:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T23:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T23:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 212,
+  "unit": "mV",
+  "timestamp": "2026-07-26T23:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T23:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T23:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 214,
+  "unit": "mV",
+  "timestamp": "2026-07-26T23:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T23:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T23:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 216,
+  "unit": "mV",
+  "timestamp": "2026-07-26T23:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-26T23:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.44,
+  "unit": "pH",
+  "timestamp": "2026-07-26T23:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 217,
+  "unit": "mV",
+  "timestamp": "2026-07-26T23:50:00-04:00",
+  "source": "apex"
+ }
+]
