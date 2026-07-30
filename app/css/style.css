@@ -694,8 +694,15 @@ body {
   flex: none;
 }
 
+@keyframes bar-swap {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+
+.range-bar.bar-swap { animation: bar-swap 0.28s var(--ease-out); }
+
 .range-btn {
-  padding: 7px 14px;
+  padding: 7px 13px;
   border-radius: 999px;
   border: 1px solid var(--border);
   background: rgba(22, 41, 62, 0.62);
