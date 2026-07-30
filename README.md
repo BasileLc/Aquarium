@@ -157,8 +157,11 @@ sudo systemctl start aquarium-poller
 - **Graphiques** : tous les graphes sur une seule page, en défilement
   vertical avec accrochage ; le titre et la barre de plages, fixes en
   haut, suivent le graphe centré. Les sondes continues (température, pH,
-  ORP) offrent 24 h → 30 j, les tests manuels 7 j → 30 j (graduations au
-  jour, sans heure : un test par jour). Une vue combinée
+  ORP) offrent 24 h → 30 j, les tests manuels 7 j → 30 j. Ces derniers sont
+  tracés **à la date seule** : l'heure du test est ignorée, chaque point est
+  placé à midi de sa journée, entre deux graduations de minuit — un test de
+  23 h 30 se lit donc au centre de son jour et non collé au suivant. Une
+  vue combinée
   « Azote & Phosphate » réunit NH₃, NO₃ et PO₄ en ppm à gauche et NO₂ en
   ppb sur un second axe à droite — le seul endroit de l'app où deux
   échelles cohabitent. Un clic sur un point propose de supprimer la

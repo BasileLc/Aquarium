@@ -99,7 +99,9 @@ function buildTimeTicks(min, max, hours, dayOnly) {
   const ticks = [];
   const cursor = new Date(min);
   cursor.setMinutes(0, 0, 0);
-  if (hours <= 48) {
+  // `dayOnly` : une graduation par jour, à minuit — les bornes de journée
+  // encadrent alors chaque point, placé à midi de son jour.
+  if (!dayOnly && hours <= 48) {
     const stepHours = hours <= 24 ? 6 : 12;
     cursor.setHours(cursor.getHours() - (cursor.getHours() % stepHours));
     let t = cursor.getTime();
@@ -110,7 +112,7 @@ function buildTimeTicks(min, max, hours, dayOnly) {
     return ticks;
   }
   cursor.setHours(0, 0, 0, 0);
-  const days = hours / 24;
+  const days = Math.max(1, hours / 24);
   const stepDays = days <= 8 ? 1 : days <= 16 ? 2 : 5;
   while (cursor.getTime() <= max) {
     if (cursor.getTime() >= min) ticks.push(cursor.getTime());
@@ -214,7 +216,7 @@ const markerPlugin = {
 // Séries d'une plage, mises en cache le temps de la visite.
 async function seriesFor(hours) {
   if (!state.seriesByRange.has(hours)) {
-    const { series, errors } = await loadMeasurements(hours);
+    const { series, errors } = await loadMeasurements(hours, { dayAlign: true });
     state.seriesByRange.set(hours, series);
     if (errors > 0) toast('Certaines données n’ont pas pu être chargées.', 'warn');
   }
@@ -243,7 +245,19 @@ function axisBounds(ids, series) {
 function buildPanel(canvas, paramIds, opts) {
   const { series, hours, showLegend = false, dayTicks = false } = opts;
   const now = Date.now();
-  const min = now - hours * 3600 * 1000;
+  let min = now - hours * 3600 * 1000;
+  let max = now;
+  if (dayTicks) {
+    // Axe borné au jour : le jour le plus ancien est montré en entier, et la
+    // borne droite va au moins jusqu'à midi pour que le point du jour courant
+    // reste dans le cadre dès le matin.
+    const startOfDay = (ms) => {
+      const d = new Date(ms);
+      return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+    };
+    min = startOfDay(min);
+    max = Math.max(now, startOfDay(now) + 12 * 3600 * 1000);
+  }
   const ctx = canvas.getContext('2d');
 
   // Deux unités dans un même panneau (ppm et ppb) → second axe à droite.
@@ -318,7 +332,7 @@ function buildPanel(canvas, paramIds, opts) {
     x: {
       type: 'linear',
       min,
-      max: now,
+      max,
       border: { color: CHROME.axis },
       grid: { color: CHROME.grid, drawTicks: false },
       afterBuildTicks: (axis) => {
@@ -372,7 +386,10 @@ function buildPanel(canvas, paramIds, opts) {
         const overManual = hits.length && PARAMS[paramIds[hits[0].datasetIndex]]?.source === 'manuel';
         event.native.target.style.cursor = overManual ? 'pointer' : 'default';
       },
-      layout: { padding: { top: 6, right: dual ? 0 : 4 } },
+      // Les graduations au jour tombent à minuit : la dernière frôle le bord
+      // droit, son étiquette a besoin de place pour ne pas être rognée. Sur un
+      // panneau à deux axes, l'axe de droite fournit déjà cette marge.
+      layout: { padding: { top: 6, right: dual ? 0 : dayTicks ? 18 : 4 } },
       scales,
       plugins: {
         legend: {
@@ -568,7 +585,9 @@ function handleChartClick(event, chart, paramIds) {
   }
   const point = chart.data.datasets[hit.datasetIndex].data[hit.index];
   if (!point) return;
-  openDeleteMeasureModal(paramId, new Date(point.x).toISOString(), point.y);
+  // `t` porte l'horodatage réel du fichier quand le point a été reporté à midi
+  // de sa journée : c'est lui qui identifie la mesure à supprimer.
+  openDeleteMeasureModal(paramId, new Date(point.t ?? point.x).toISOString(), point.y);
 }
 
 // Formulaire « Ajouter une mesure manuelle ». `onSaved` est appelé après

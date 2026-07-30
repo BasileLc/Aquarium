@@ -70,7 +70,14 @@ export async function loadLatest() {
 
 // Séries temporelles de TOUS les paramètres sur les `hours` dernières heures.
 // Retourne { erreurs: n, series: { paramId: [{x: ms, y: valeur}, ...] } }.
-export async function loadMeasurements(hours) {
+//
+// `dayAlign` : les paramètres marqués `dayTicks` (tests manuels) sont reportés
+// à midi de leur journée, et `t` conserve l'horodatage réel du fichier — c'est
+// lui qui identifie la mesure pour la suppression. Les graphiques l'activent :
+// un test n'est daté qu'au jour, il doit se lire au centre de son jour et non
+// à l'heure où il a été fait. Les jauges, elles, raisonnent sur une fenêtre de
+// 12 h glissante et gardent donc les instants réels.
+export async function loadMeasurements(hours, { dayAlign = false } = {}) {
   const now = new Date();
   const days = daysInRange(hours);
   const targets = [];
@@ -99,13 +106,27 @@ export async function loadMeasurements(hours) {
 
   const since = now.getTime() - hours * 3600 * 1000;
   const horizon = now.getTime() + 60000;
+  // Fenêtre au jour entier pour les séries alignées : une coupure fixée à
+  // l'heure courante écarterait un test matinal du jour le plus ancien, et un
+  // test du jour reporté à midi tomberait « après maintenant » toute la matinée.
+  const startOfDay = (ms) => {
+    const d = new Date(ms);
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  };
+  const sinceDay = startOfDay(since);
+  const horizonDay = startOfDay(now.getTime()) + 24 * 3600 * 1000;
+
   const series = {};
   for (const id of Object.keys(PARAMS)) series[id] = [];
   for (const file of files) {
     if (!Array.isArray(file)) continue;
     for (const m of file) {
       const t = Date.parse(m.timestamp);
-      if (Number.isFinite(t) && t >= since && t <= horizon && series[m.parameter]) {
+      if (!Number.isFinite(t) || !series[m.parameter]) continue;
+      if (dayAlign && PARAMS[m.parameter].dayTicks) {
+        if (t < sinceDay || t >= horizonDay) continue;
+        series[m.parameter].push({ x: startOfDay(t) + 12 * 3600 * 1000, y: m.value, t });
+      } else if (t >= since && t <= horizon) {
         series[m.parameter].push({ x: t, y: m.value });
       }
     }
