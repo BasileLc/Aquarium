@@ -28,6 +28,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T12:30:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.6,
   "unit": "pH",
@@ -56,6 +63,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-27T12:40:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.6,
   "unit": "pH",
@@ -84,6 +98,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T12:50:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.6,
   "unit": "pH",
@@ -112,6 +133,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T13:00:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.6,
   "unit": "pH",
@@ -140,6 +168,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-27T13:10:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.6,
   "unit": "pH",
@@ -168,6 +203,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T13:20:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -196,6 +238,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-27T13:30:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -224,6 +273,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T13:40:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -252,6 +308,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T13:50:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -280,6 +343,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-27T14:00:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -308,6 +378,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T14:10:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -332,6 +409,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T14:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T14:20:00-04:00",
   "source": "apex"
  },
@@ -360,6 +444,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T14:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T14:30:00-04:00",
   "source": "apex"
  },
@@ -388,6 +479,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T14:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T14:40:00-04:00",
   "source": "apex"
  },
@@ -420,6 +518,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
+  "timestamp": "2026-07-27T14:50:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -448,6 +553,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T15:00:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -472,6 +584,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T15:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T15:10:00-04:00",
   "source": "apex"
  },
@@ -500,6 +619,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T15:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T15:20:00-04:00",
   "source": "apex"
  },
@@ -528,6 +654,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T15:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T15:30:00-04:00",
   "source": "apex"
  },
@@ -560,6 +693,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-27T15:40:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -588,6 +728,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T15:50:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -612,6 +759,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T16:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T16:00:00-04:00",
   "source": "apex"
  },
@@ -640,6 +794,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T16:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T16:10:00-04:00",
   "source": "apex"
  },
@@ -672,6 +833,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T16:20:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -700,6 +868,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-27T16:30:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -724,6 +899,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T16:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T16:40:00-04:00",
   "source": "apex"
  },
@@ -752,6 +934,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T16:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T16:50:00-04:00",
   "source": "apex"
  },
@@ -784,6 +973,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-27T17:00:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -808,6 +1004,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T17:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T17:10:00-04:00",
   "source": "apex"
  },
@@ -840,6 +1043,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T17:20:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -868,6 +1078,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T17:30:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.62,
   "unit": "pH",
@@ -892,6 +1109,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T17:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 26.0,
+  "unit": "°C",
   "timestamp": "2026-07-27T17:40:00-04:00",
   "source": "apex"
  },
@@ -924,6 +1148,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-27T17:50:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.63,
   "unit": "pH",
@@ -952,6 +1183,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T18:00:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.62,
   "unit": "pH",
@@ -976,6 +1214,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T18:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T18:10:00-04:00",
   "source": "apex"
  },
@@ -1008,6 +1253,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T18:20:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.62,
   "unit": "pH",
@@ -1036,6 +1288,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-27T18:30:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.62,
   "unit": "pH",
@@ -1060,6 +1319,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T18:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T18:40:00-04:00",
   "source": "apex"
  },
@@ -1088,6 +1354,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T18:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T18:50:00-04:00",
   "source": "apex"
  },
@@ -1120,6 +1393,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-27T19:00:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -1144,6 +1424,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T19:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T19:10:00-04:00",
   "source": "apex"
  },
@@ -1172,6 +1459,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T19:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T19:20:00-04:00",
   "source": "apex"
  },
@@ -1200,6 +1494,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T19:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 26.0,
+  "unit": "°C",
   "timestamp": "2026-07-27T19:30:00-04:00",
   "source": "apex"
  },
@@ -1228,6 +1529,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T19:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T19:40:00-04:00",
   "source": "apex"
  },
@@ -1256,6 +1564,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T19:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T19:50:00-04:00",
   "source": "apex"
  },
@@ -1288,6 +1603,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 26.0,
+  "unit": "°C",
+  "timestamp": "2026-07-27T20:00:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -1316,6 +1638,13 @@
   "source": "apex"
  },
  {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
+  "timestamp": "2026-07-27T20:10:00-04:00",
+  "source": "apex"
+ },
+ {
   "parameter": "ph",
   "value": 7.61,
   "unit": "pH",
@@ -1340,6 +1669,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T20:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 26.0,
+  "unit": "°C",
   "timestamp": "2026-07-27T20:20:00-04:00",
   "source": "apex"
  },
@@ -1368,6 +1704,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T20:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T20:30:00-04:00",
   "source": "apex"
  },
@@ -1396,6 +1739,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T20:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 26.0,
+  "unit": "°C",
   "timestamp": "2026-07-27T20:40:00-04:00",
   "source": "apex"
  },
@@ -1424,6 +1774,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T20:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T20:50:00-04:00",
   "source": "apex"
  },
@@ -1452,6 +1809,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T21:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T21:00:00-04:00",
   "source": "apex"
  },
@@ -1480,6 +1844,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T21:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T21:10:00-04:00",
   "source": "apex"
  },
@@ -1508,6 +1879,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T21:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T21:20:00-04:00",
   "source": "apex"
  },
@@ -1536,6 +1914,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T21:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T21:30:00-04:00",
   "source": "apex"
  },
@@ -1564,6 +1949,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T21:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T21:40:00-04:00",
   "source": "apex"
  },
@@ -1592,6 +1984,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T21:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T21:50:00-04:00",
   "source": "apex"
  },
@@ -1620,6 +2019,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T22:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
   "timestamp": "2026-07-27T22:00:00-04:00",
   "source": "apex"
  },
@@ -1648,6 +2054,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T22:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T22:10:00-04:00",
   "source": "apex"
  },
@@ -1676,6 +2089,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T22:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
   "timestamp": "2026-07-27T22:20:00-04:00",
   "source": "apex"
  },
@@ -1704,6 +2124,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T22:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T22:30:00-04:00",
   "source": "apex"
  },
@@ -1732,6 +2159,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T22:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
   "timestamp": "2026-07-27T22:40:00-04:00",
   "source": "apex"
  },
@@ -1760,6 +2194,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T22:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T22:50:00-04:00",
   "source": "apex"
  },
@@ -1788,6 +2229,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T23:00:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
   "timestamp": "2026-07-27T23:00:00-04:00",
   "source": "apex"
  },
@@ -1816,6 +2264,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T23:10:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T23:10:00-04:00",
   "source": "apex"
  },
@@ -1844,6 +2299,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T23:20:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T23:20:00-04:00",
   "source": "apex"
  },
@@ -1872,6 +2334,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T23:30:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.94,
+  "unit": "°C",
   "timestamp": "2026-07-27T23:30:00-04:00",
   "source": "apex"
  },
@@ -1900,6 +2369,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T23:40:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.83,
+  "unit": "°C",
   "timestamp": "2026-07-27T23:40:00-04:00",
   "source": "apex"
  },
@@ -1928,6 +2404,13 @@
   "parameter": "no3",
   "value": 0.0,
   "unit": "ppm",
+  "timestamp": "2026-07-27T23:50:00-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
   "timestamp": "2026-07-27T23:50:00-04:00",
   "source": "apex"
  }
