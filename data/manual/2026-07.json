@@ -42,6 +42,13 @@
   "source": "manuel"
  },
  {
+  "parameter": "no2",
+  "value": 6,
+  "unit": "ppb",
+  "timestamp": "2026-07-25T23:30:00-04:00",
+  "source": "manuel"
+ },
+ {
   "parameter": "nh3",
   "value": 0.37,
   "unit": "ppm",
