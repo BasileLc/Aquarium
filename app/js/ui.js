@@ -68,6 +68,11 @@ export function isoWithOffset(date) {
   );
 }
 
+// Valeur pour l'attribut value d'un <input type="date">.
+export function dateInputValue(date) {
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
 // Valeur pour l'attribut value d'un <input type="datetime-local">.
 export function datetimeLocalValue(date) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
@@ -87,16 +92,24 @@ export function fmtClock(ts) {
 }
 
 // « à 14:05 », « hier à 14:05 », « 12/07 à 14:05 » selon l'ancienneté.
-export function fmtWhen(ts) {
+// `dayOnly` : sans l'heure — pour les tests manuels, qui ne sont datés qu'au
+// jour (« aujourd'hui », « hier », « 12/07 »).
+export function fmtWhen(ts, dayOnly = false) {
   const d = new Date(ts);
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const day = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   const diffDays = Math.round((today - day) / 86400000);
+  const date = `${pad(d.getDate())}/${pad(d.getMonth() + 1)}`;
+  if (dayOnly) {
+    if (diffDays === 0) return "aujourd'hui";
+    if (diffDays === 1) return 'hier';
+    return date;
+  }
   const clock = fmtClock(d);
   if (diffDays === 0) return `à ${clock}`;
   if (diffDays === 1) return `hier à ${clock}`;
-  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)} à ${clock}`;
+  return `${date} à ${clock}`;
 }
 
 const DAY_NAMES = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'];

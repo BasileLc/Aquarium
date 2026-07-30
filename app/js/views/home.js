@@ -22,7 +22,7 @@ function gaugeCell(id, stats, measurement, index) {
         </span>
       </span>
       <span class="cell-foot ${stale ? 'stale' : ''}">
-        ${hasValue ? escapeHtml(fmtWhen(measurement.timestamp)) : 'aucune donnée'}${stale ? ' · ancien' : ''}
+        ${hasValue ? escapeHtml(fmtWhen(measurement.timestamp, Boolean(p.dayTicks))) : 'aucune donnée'}${stale ? ' · ancien' : ''}
       </span>
     </a>`;
 }

@@ -164,8 +164,10 @@ sudo systemctl start aquarium-poller
   échelles cohabitent. Un clic sur un point propose de supprimer la
   mesure (tests manuels seulement) ; le bouton 📌 pose un marqueur
   vertical étiqueté sur tous les graphes. Bouton
-  « ＋ Ajouter une mesure manuelle » (la salinité et la densité SG se
-  saisissent ensemble, comme une seule mesure).
+  « ＋ Ajouter une mesure manuelle » : seule la **date** est demandée (un
+  test par jour), la mesure étant horodatée à midi de ce jour ; la
+  salinité et la densité SG se saisissent ensemble, comme une seule
+  mesure.
 - **Événements** : liste chronologique des événements à venir, ajout,
   marquage « fait », suppression ; les passés restent consultables. Les
   marqueurs posés sur les graphes se suppriment depuis cette page.
