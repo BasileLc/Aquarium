@@ -127,6 +127,27 @@ Notes :
 - Température : l'Apex renvoie des °F par défaut ; le poller convertit et
   stocke en °C (`temp_unit = C` si votre sonde est déjà en Celsius).
 
+### 5. (Optionnel) Importer l'historique déjà présent dans l'Apex
+
+L'Apex conserve en interne un historique des sondes (`datalog.xml`). Pour
+peupler la base avec ces données passées, une seule fois, sur la machine
+qui fait tourner le poller :
+
+```bash
+cd ~/Aquarium
+sudo systemctl stop aquarium-poller     # évite deux écritures en même temps
+python3 poller/import_datalog.py --config poller/config.ini --days 365
+sudo systemctl start aquarium-poller
+```
+
+- L'import réutilise la config du poller (IP, sondes, fuseau, °F→°C) et
+  pousse tout **en un seul commit**.
+- Il **déduplique** sur (paramètre, horodatage) : relançable sans risque,
+  les relevés déjà poussés par le service sont préservés.
+- Les jours sans données sont ignorés — la profondeur réelle dépend de ce
+  que votre Apex a gardé en mémoire (`--days 730` pour tenter plus loin).
+- `--dry-run` montre ce qui serait importé sans rien écrire.
+
 ## L'application
 
 - **Accueil** : valeur actuelle de chaque paramètre avec l'heure du
