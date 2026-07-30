@@ -3995,5 +3995,40 @@
   "unit": "ppm",
   "timestamp": "2026-07-29T21:03:39-04:00",
   "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-29T21:10:18-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.71,
+  "unit": "pH",
+  "timestamp": "2026-07-29T21:10:18-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 260,
+  "unit": "mV",
+  "timestamp": "2026-07-29T21:10:18-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "no3",
+  "value": 0.4,
+  "unit": "ppm",
+  "timestamp": "2026-07-29T21:10:18-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "po4",
+  "value": 0.0,
+  "unit": "ppm",
+  "timestamp": "2026-07-29T21:10:18-04:00",
+  "source": "apex"
  }
 ]
