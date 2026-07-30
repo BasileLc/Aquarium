@@ -146,6 +146,91 @@ export async function addManualMeasurements(measurements) {
   }
 }
 
+// Dernière mesure restante d'un paramètre : on remonte les fichiers mensuels
+// depuis `from`, du plus récent au plus ancien (24 mois au maximum).
+async function findLastManual(parameter, from) {
+  const cursor = new Date(from.getFullYear(), from.getMonth(), 1);
+  for (let i = 0; i < 24; i += 1) {
+    const entries = (await readJson(manualMonthPath(cursor), [])) || [];
+    const matches = entries
+      .filter((m) => m.parameter === parameter)
+      .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
+    if (matches.length) return matches[0];
+    cursor.setMonth(cursor.getMonth() - 1);
+  }
+  return null;
+}
+
+/**
+ * Supprime des mesures manuelles, identifiées par (paramètre, horodatage),
+ * et remet à jour data/manual/latest.json — en repêchant la mesure précédente
+ * quand celle supprimée était la dernière connue.
+ * Retourne le nombre de mesures effectivement retirées.
+ */
+export async function deleteManualMeasurements(targets) {
+  // Le fichier est nommé d'après le mois local ; on inspecte aussi les mois
+  // voisins pour ne pas échouer sur une mesure enregistrée à la frontière
+  // d'un mois (ou depuis un autre fuseau horaire).
+  const byPath = new Map();
+  for (const t of targets) {
+    const when = new Date(Date.parse(t.timestamp));
+    const candidates = [-1, 0, 1].map((offset) => {
+      const d = new Date(when.getFullYear(), when.getMonth() + offset, 1);
+      return manualMonthPath(d);
+    });
+    let found = candidates[1];
+    for (const path of candidates) {
+      const entries = (await readJson(path, [])) || [];
+      if (
+        entries.some(
+          (m) => m.parameter === t.parameter && Date.parse(m.timestamp) === Date.parse(t.timestamp)
+        )
+      ) {
+        found = path;
+        break;
+      }
+    }
+    if (!byPath.has(found)) byPath.set(found, []);
+    byPath.get(found).push(t);
+  }
+
+  let removed = 0;
+  for (const [path, wanted] of byPath) {
+    const entries = (await readJson(path, [])) || [];
+    const keep = entries.filter(
+      (m) =>
+        !wanted.some(
+          (w) => w.parameter === m.parameter && Date.parse(w.timestamp) === Date.parse(m.timestamp)
+        )
+    );
+    if (keep.length === entries.length) continue;
+    removed += entries.length - keep.length;
+    const labels = wanted.map((w) => w.parameter).join(', ');
+    await writeJson(path, keep, `manuel: suppression de ${labels} (${wanted[0].timestamp})`);
+    cache.delete(path);
+  }
+
+  if (removed === 0) {
+    throw new Error('Mesure introuvable (déjà supprimée ailleurs ?).');
+  }
+
+  const latest = (await readJson('data/manual/latest.json', {})) || {};
+  let latestChanged = false;
+  for (const t of targets) {
+    const current = latest[t.parameter];
+    if (!current || Date.parse(current.timestamp) !== Date.parse(t.timestamp)) continue;
+    const previous = await findLastManual(t.parameter, new Date(Date.parse(t.timestamp)));
+    if (previous) latest[t.parameter] = previous;
+    else delete latest[t.parameter];
+    latestChanged = true;
+  }
+  if (latestChanged) {
+    await writeJson('data/manual/latest.json', latest, 'manuel: mise à jour des dernières valeurs');
+    cache.delete('data/manual/latest.json');
+  }
+  return removed;
+}
+
 // --- Événements -----------------------------------------------------------
 
 export async function loadEvents() {
