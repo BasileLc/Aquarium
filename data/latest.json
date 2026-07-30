@@ -3,14 +3,21 @@
   "parameter": "ph",
   "value": 7.71,
   "unit": "pH",
-  "timestamp": "2026-07-29T20:33:26-04:00",
+  "timestamp": "2026-07-29T20:40:08-04:00",
   "source": "apex"
  },
  "orp": {
   "parameter": "orp",
-  "value": 256,
+  "value": 257,
   "unit": "mV",
-  "timestamp": "2026-07-29T20:33:26-04:00",
+  "timestamp": "2026-07-29T20:40:08-04:00",
+  "source": "apex"
+ },
+ "temp": {
+  "parameter": "temp",
+  "value": 25.89,
+  "unit": "°C",
+  "timestamp": "2026-07-29T20:40:08-04:00",
   "source": "apex"
  }
 }
