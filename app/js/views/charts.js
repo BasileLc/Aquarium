@@ -1,6 +1,6 @@
 // Page Graphiques : un graphe par paramètre + graphes combinés (panneaux
-// empilés sur le même axe temps), navigation par swipe/flèches, plage de
-// temps réglable (24 h par défaut) et saisie de mesures manuelles.
+// empilés sur le même axe temps), swipe dynamique qui suit le doigt,
+// plage de temps réglable (24 h par défaut) et saisie de mesures manuelles.
 import { PARAMS, COMBINED, MANUAL_FORMS, RANGES } from '../config.js';
 import { loadMeasurements, addManualMeasurements } from '../store.js';
 import {
@@ -11,6 +11,7 @@ import {
   isoWithOffset,
   datetimeLocalValue,
 } from '../ui.js';
+import { icon } from '../icons.js';
 
 const SLIDES = [
   ...Object.keys(PARAMS).map((id) => ({ type: 'param', id, label: PARAMS[id].label, panels: [[id]] })),
@@ -118,11 +119,13 @@ function buildPanel(canvas, paramIds, series, rangeHours) {
     if (dataMin >= 0) suggestedMin = Math.max(0, suggestedMin);
     suggestedMax = dataMax + padding;
   }
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const chart = new Chart(canvas.getContext('2d'), {
     type: 'line',
     data: { datasets },
     options: {
-      animation: false,
+      animation: reducedMotion ? false : { duration: 420, easing: 'easeOutQuart' },
       responsive: true,
       maintainAspectRatio: false,
       parsing: false,
@@ -136,12 +139,12 @@ function buildPanel(canvas, paramIds, series, rangeHours) {
           border: { color: CHROME.axis },
           grid: { color: CHROME.grid, drawTicks: false },
           afterBuildTicks: (axis) => {
-            axis.ticks = buildTimeTicks(axis.min, axis.max, rangeHours).map((value) => ({ value }));
+            axis.ticks = buildTimeTicks(axis.min, axis.max, state.rangeHours).map((value) => ({ value }));
           },
           ticks: {
             color: CHROME.muted,
             maxRotation: 0,
-            callback: (v) => fmtTick(v, rangeHours),
+            callback: (v) => fmtTick(v, state.rangeHours),
           },
         },
         y: {
@@ -169,6 +172,8 @@ function buildPanel(canvas, paramIds, series, rangeHours) {
           bodyColor: CHROME.text,
           borderColor: 'rgba(255,255,255,0.12)',
           borderWidth: 1,
+          cornerRadius: 10,
+          padding: 10,
           callbacks: {
             title: (items) => (items.length ? fmtTooltipTitle(items[0].parsed.x) : ''),
             label: (item) => {
@@ -183,7 +188,8 @@ function buildPanel(canvas, paramIds, series, rangeHours) {
   state.charts.push(chart);
 }
 
-async function drawSlide(root) {
+// `direction` : -1 = venir de droite, +1 = venir de gauche, 0 = sans effet.
+async function drawSlide(root, direction = 0) {
   const slide = SLIDES[state.index];
   root.querySelector('#chart-title').textContent = slide.label;
   root.querySelector('#slide-pos').textContent = `${state.index + 1} / ${SLIDES.length}`;
@@ -198,6 +204,9 @@ async function drawSlide(root) {
 
   destroyCharts();
   const host = root.querySelector('#panels');
+  host.classList.remove('slide-in-left', 'slide-in-right', 'settle', 'dragging');
+  host.style.transform = '';
+  host.style.opacity = '';
   host.innerHTML = '<div class="chart-loading">Chargement des données…</div>';
 
   const { series, errors } = await loadMeasurements(state.rangeHours);
@@ -217,17 +226,21 @@ async function drawSlide(root) {
   if (!hasData) {
     host.insertAdjacentHTML(
       'beforeend',
-      '<div class="chart-empty">Aucune donnée sur cette période</div>'
+      `<div class="chart-empty">${icon('waves', 30)}<span>Aucune donnée sur cette période</span></div>`
     );
+  }
+  if (direction !== 0) {
+    host.classList.add(direction > 0 ? 'slide-in-right' : 'slide-in-left');
+    setTimeout(() => host.classList.remove('slide-in-right', 'slide-in-left'), 360);
   }
   slide.panels.forEach((ids, i) => {
     buildPanel(host.querySelector(`#panel-canvas-${i}`), ids, series, state.rangeHours);
   });
 }
 
-function goTo(root, index) {
+function goTo(root, index, direction = 0) {
   state.index = (index + SLIDES.length) % SLIDES.length;
-  drawSlide(root).catch((e) => toast(e.message, 'error'));
+  drawSlide(root, direction).catch((e) => toast(e.message, 'error'));
 }
 
 // Formulaire « Ajouter une mesure manuelle ». `onSaved` est appelé après
@@ -304,6 +317,64 @@ export function openMeasureModal(onSaved) {
   });
 }
 
+// Swipe dynamique : le contenu suit le doigt, puis bascule ou revient
+// élastiquement selon l'amplitude du geste.
+function attachSwipe(root, panels) {
+  let startX = 0;
+  let startY = 0;
+  let dragX = 0;
+  let horizontal = null;
+
+  panels.addEventListener(
+    'touchstart',
+    (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      horizontal = null;
+      dragX = 0;
+    },
+    { passive: true }
+  );
+
+  panels.addEventListener(
+    'touchmove',
+    (e) => {
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
+      if (horizontal === null && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
+        horizontal = Math.abs(dx) > Math.abs(dy) * 1.2;
+      }
+      if (!horizontal) return;
+      dragX = dx;
+      panels.classList.add('dragging');
+      panels.style.transform = `translateX(${dragX}px)`;
+      panels.style.opacity = String(Math.max(0.4, 1 - Math.abs(dragX) / 380));
+    },
+    { passive: true }
+  );
+
+  panels.addEventListener(
+    'touchend',
+    () => {
+      if (!horizontal) return;
+      panels.classList.remove('dragging');
+      if (Math.abs(dragX) > 70) {
+        const direction = dragX < 0 ? 1 : -1;
+        goTo(root, state.index + direction, direction);
+      } else {
+        // Retour élastique.
+        panels.classList.add('settle');
+        panels.style.transform = '';
+        panels.style.opacity = '';
+        setTimeout(() => panels.classList.remove('settle'), 320);
+      }
+      dragX = 0;
+      horizontal = null;
+    },
+    { passive: true }
+  );
+}
+
 export async function renderCharts(el, query) {
   const wanted = query.get('p');
   const found = SLIDES.findIndex((s) => s.id === wanted);
@@ -313,12 +384,12 @@ export async function renderCharts(el, query) {
   el.innerHTML = `
     <div class="charts-page">
       <div class="chart-nav">
-        <button type="button" class="icon-btn" id="prev-slide" aria-label="Graphe précédent">‹</button>
+        <button type="button" class="icon-btn" id="prev-slide" aria-label="Graphe précédent">${icon('chevron-left', 22)}</button>
         <div class="chart-heading">
           <div id="chart-title" class="chart-title"></div>
           <div id="slide-pos" class="slide-pos"></div>
         </div>
-        <button type="button" class="icon-btn" id="next-slide" aria-label="Graphe suivant">›</button>
+        <button type="button" class="icon-btn" id="next-slide" aria-label="Graphe suivant">${icon('chevron-right', 22)}</button>
       </div>
       <div class="dots" id="dots">
         ${SLIDES.map(
@@ -332,12 +403,14 @@ export async function renderCharts(el, query) {
             `<button type="button" class="range-btn" data-hours="${r.hours}">${r.label}</button>`
         ).join('')}
       </div>
-      <div id="panels" class="panels"></div>
-      <button type="button" class="btn primary" id="add-measure">＋ Ajouter une mesure manuelle</button>
+      <div class="slide-stage">
+        <div id="panels" class="panels"></div>
+      </div>
+      <button type="button" class="btn primary" id="add-measure">${icon('plus', 18)} Ajouter une mesure manuelle</button>
     </div>`;
 
-  el.querySelector('#prev-slide').addEventListener('click', () => goTo(el, state.index - 1));
-  el.querySelector('#next-slide').addEventListener('click', () => goTo(el, state.index + 1));
+  el.querySelector('#prev-slide').addEventListener('click', () => goTo(el, state.index - 1, -1));
+  el.querySelector('#next-slide').addEventListener('click', () => goTo(el, state.index + 1, 1));
   el.querySelector('#dots').addEventListener('click', (e) => {
     const dot = e.target.closest('.dot');
     if (dot) goTo(el, Number(dot.dataset.index));
@@ -355,36 +428,15 @@ export async function renderCharts(el, query) {
     })
   );
 
-  // Navigation par swipe (mobile) et flèches (clavier).
-  const panels = el.querySelector('#panels');
-  let touchX = 0;
-  let touchY = 0;
-  panels.addEventListener(
-    'touchstart',
-    (e) => {
-      touchX = e.touches[0].clientX;
-      touchY = e.touches[0].clientY;
-    },
-    { passive: true }
-  );
-  panels.addEventListener(
-    'touchend',
-    (e) => {
-      const dx = e.changedTouches[0].clientX - touchX;
-      const dy = e.changedTouches[0].clientY - touchY;
-      if (Math.abs(dx) > 60 && Math.abs(dx) > 2 * Math.abs(dy)) {
-        goTo(el, state.index + (dx < 0 ? 1 : -1));
-      }
-    },
-    { passive: true }
-  );
+  attachSwipe(el, el.querySelector('#panels'));
+
   const onKey = (e) => {
     if (!document.body.contains(el)) {
       document.removeEventListener('keydown', onKey);
       return;
     }
-    if (e.key === 'ArrowLeft') goTo(el, state.index - 1);
-    if (e.key === 'ArrowRight') goTo(el, state.index + 1);
+    if (e.key === 'ArrowLeft') goTo(el, state.index - 1, -1);
+    if (e.key === 'ArrowRight') goTo(el, state.index + 1, 1);
   };
   document.addEventListener('keydown', onKey);
 

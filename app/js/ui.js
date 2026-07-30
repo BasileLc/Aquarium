@@ -1,4 +1,5 @@
 // Petits utilitaires d'interface : toasts, modales, formatage.
+import { icon } from './icons.js';
 
 export function escapeHtml(s) {
   return String(s)
@@ -31,7 +32,7 @@ export function openModal(title, bodyHtml) {
     <div class="modal" role="dialog" aria-modal="true" aria-label="${escapeHtml(title)}">
       <div class="modal-head">
         <h3>${escapeHtml(title)}</h3>
-        <button type="button" class="icon-btn modal-close" aria-label="Fermer">✕</button>
+        <button type="button" class="icon-btn modal-close" aria-label="Fermer">${icon('x', 18)}</button>
       </div>
       <div class="modal-body">${bodyHtml}</div>
     </div>`;

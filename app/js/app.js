@@ -1,4 +1,4 @@
-// Point d'entrée : routeur par hash + enregistrement du service worker.
+// Point d'entrée : routeur par hash, transitions de vues et service worker.
 import { renderHome } from './views/home.js';
 import { renderCharts } from './views/charts.js';
 import { renderEvents } from './views/events.js';
@@ -19,6 +19,15 @@ function parseHash() {
   return { name: routes[path] ? path : 'home', query: new URLSearchParams(qs || '') };
 }
 
+const SKELETON = `
+  <div class="loading" aria-label="Chargement">
+    <div class="sk-bar"></div>
+    <div class="sk-row">
+      <div class="sk-card"></div><div class="sk-card"></div>
+      <div class="sk-card"></div><div class="sk-card"></div>
+    </div>
+  </div>`;
+
 let renderSeq = 0;
 
 async function route() {
@@ -30,9 +39,11 @@ async function route() {
   }
 
   const view = document.getElementById('view');
-  view.innerHTML = '<div class="loading">Chargement…</div>';
+  view.classList.remove('view-enter');
+  view.innerHTML = SKELETON;
   try {
     await routes[name](view, query);
+    if (seq !== renderSeq) return;
   } catch (err) {
     if (seq !== renderSeq) return; // une navigation plus récente a pris la main
     view.innerHTML = `
@@ -42,13 +53,22 @@ async function route() {
         <p class="hint">Vérifiez la connexion Internet, puis réessayez avec le bouton ⟳.</p>
       </div>`;
   }
+  // Rejoue l'animation d'entrée de vue (le reflow force le redémarrage).
+  void view.offsetWidth;
+  view.classList.add('view-enter');
 }
 
 window.addEventListener('hashchange', route);
 
-document.getElementById('refresh-btn').addEventListener('click', () => {
+const refreshBtn = document.getElementById('refresh-btn');
+refreshBtn.addEventListener('click', async () => {
+  refreshBtn.classList.add('spinning');
   clearCache();
-  route();
+  try {
+    await route();
+  } finally {
+    refreshBtn.classList.remove('spinning');
+  }
 });
 
 route();

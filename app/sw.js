@@ -1,7 +1,7 @@
 // Service worker : met l'enveloppe de l'app en cache pour l'installation PWA
 // et le hors-ligne. Les données (api.github.com / raw.githubusercontent.com)
 // ne sont jamais mises en cache ici.
-const CACHE = 'aquarium-v1';
+const CACHE = 'aquarium-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ const ASSETS = [
   './js/github.js',
   './js/store.js',
   './js/ui.js',
+  './js/icons.js',
   './js/views/home.js',
   './js/views/charts.js',
   './js/views/events.js',

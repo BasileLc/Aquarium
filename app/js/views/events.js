@@ -1,19 +1,27 @@
 // Page Événements : calendrier de maintenance — événements à venir en
 // premier, ajout via formulaire, marquage « fait » et suppression.
 import { loadEvents, addEvent, setEventStatus, deleteEvent } from '../store.js';
-import { escapeHtml, toast, openModal, fmtDateHuman, fmtCountdown } from '../ui.js';
+import { escapeHtml, toast, openModal, fmtCountdown } from '../ui.js';
+import { icon } from '../icons.js';
 
-function eventCard(evt, { past }) {
+const MONTHS = ['jan', 'fév', 'mar', 'avr', 'mai', 'juin', 'juil', 'août', 'sep', 'oct', 'nov', 'déc'];
+
+function eventCard(evt, { past, index }) {
+  const d = new Date(`${evt.date}T00:00:00`);
   return `
-    <div class="card event-card ${past ? 'event-past' : ''}" data-id="${escapeHtml(evt.id)}">
+    <div class="card event-card ${past ? 'event-past' : ''}" data-id="${escapeHtml(evt.id)}" style="--i:${index}">
+      <div class="date-badge">
+        <span class="db-day">${d.getDate()}</span>
+        <span class="db-month">${MONTHS[d.getMonth()]}</span>
+      </div>
       <div class="event-main">
         <div class="event-name">${escapeHtml(evt.name)}${evt.status === 'done' ? ' ✓' : ''}</div>
-        <div class="event-date">${escapeHtml(fmtDateHuman(evt.date))} · ${escapeHtml(fmtCountdown(evt.date))}</div>
+        <div class="event-date">${escapeHtml(fmtCountdown(evt.date))}${d.getFullYear() !== new Date().getFullYear() ? ` · ${d.getFullYear()}` : ''}</div>
         ${evt.note ? `<div class="event-note">${escapeHtml(evt.note)}</div>` : ''}
       </div>
       <div class="event-actions">
-        ${evt.status !== 'done' ? '<button type="button" class="icon-btn act-done" title="Marquer comme fait">✓</button>' : ''}
-        <button type="button" class="icon-btn act-delete" title="Supprimer">🗑</button>
+        ${evt.status !== 'done' ? `<button type="button" class="icon-btn act-done" title="Marquer comme fait">${icon('check', 18)}</button>` : ''}
+        <button type="button" class="icon-btn act-delete" title="Supprimer">${icon('trash', 17)}</button>
       </div>
     </div>`;
 }
@@ -75,17 +83,17 @@ export async function renderEvents(el) {
 
   el.innerHTML = `
     <div class="events-page">
-      <button type="button" class="btn primary" id="add-event">＋ Ajouter un événement</button>
+      <button type="button" class="btn primary" id="add-event">${icon('plus', 18)} Ajouter un événement</button>
       <section>
         <h2>À venir</h2>
-        ${upcoming.length ? upcoming.map((e) => eventCard(e, { past: false })).join('') : '<div class="empty-hint card">Aucun événement planifié</div>'}
+        ${upcoming.length ? upcoming.map((e, i) => eventCard(e, { past: false, index: i })).join('') : '<div class="empty-hint card">Aucun événement planifié</div>'}
       </section>
       ${
         past.length
           ? `<section>
               <details>
                 <summary>Passés / terminés (${past.length})</summary>
-                ${past.map((e) => eventCard(e, { past: true })).join('')}
+                ${past.map((e, i) => eventCard(e, { past: true, index: i })).join('')}
               </details>
             </section>`
           : ''
