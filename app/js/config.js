@@ -48,6 +48,7 @@ export const MANUAL_FORMS = [
 // Plages de temps proposées sur la page Graphiques (24 h par défaut).
 export const RANGES = [
   { hours: 24,      label: '24 h' },
+  { hours: 48,      label: '48 h' },
   { hours: 24 * 7,  label: '7 j' },
   { hours: 24 * 30, label: '30 j' },
 ];

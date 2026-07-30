@@ -2,7 +2,13 @@
 // vertical avec accrochage et transitions pilotées par le scroll (profondeur,
 // échelle et opacité suivent la position de chaque section).
 import { PARAMS, COMBINED, MANUAL_FORMS, RANGES } from '../config.js';
-import { loadMeasurements, loadLatest, addManualMeasurements } from '../store.js';
+import {
+  loadMeasurements,
+  loadLatest,
+  addManualMeasurements,
+  loadMarkers,
+  addMarker,
+} from '../store.js';
 import {
   escapeHtml,
   toast,
@@ -36,9 +42,10 @@ const state = {
   rangeHours: 24,
   charts: new Map(), // index de slide → [Chart, …]
   series: {},
+  markers: [],
   sections: [],
   observer: null,
-  onScroll: null,
+  onResize: null,
 };
 
 const pad = (n) => String(n).padStart(2, '0');
@@ -46,6 +53,13 @@ const pad = (n) => String(n).padStart(2, '0');
 function fmtTick(ms) {
   const d = new Date(ms);
   if (state.rangeHours <= 24) return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  // Sur 48 h les graduations tombent toutes les 12 h : la date marque minuit,
+  // l'heure marque midi (sinon deux graduations porteraient le même jour).
+  if (state.rangeHours <= 48) {
+    return d.getHours() === 0
+      ? `${pad(d.getDate())}/${pad(d.getMonth() + 1)}`
+      : `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
   return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}`;
 }
 
@@ -54,17 +68,19 @@ function fmtTooltipTitle(ms) {
   return `${pad(d.getDate())}/${pad(d.getMonth() + 1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-// Graduations de l'axe temps à heures/jours ronds.
+// Graduations de l'axe temps à heures/jours ronds : toutes les 6 h sur 24 h,
+// toutes les 12 h sur 48 h, chaque jour sur 7 j, tous les 5 jours sur 30 j.
 function buildTimeTicks(min, max) {
   const ticks = [];
   const cursor = new Date(min);
   cursor.setMinutes(0, 0, 0);
-  if (state.rangeHours <= 24) {
-    cursor.setHours(cursor.getHours() - (cursor.getHours() % 6));
+  if (state.rangeHours <= 48) {
+    const stepHours = state.rangeHours <= 24 ? 6 : 12;
+    cursor.setHours(cursor.getHours() - (cursor.getHours() % stepHours));
     let t = cursor.getTime();
     while (t <= max) {
       if (t >= min) ticks.push(t);
-      t += 6 * 3600 * 1000;
+      t += stepHours * 3600 * 1000;
     }
   } else {
     cursor.setHours(0, 0, 0, 0);
@@ -76,6 +92,55 @@ function buildTimeTicks(min, max) {
   }
   return ticks;
 }
+
+// Repères verticaux (marqueurs) tracés par-dessus les courbes : une ligne
+// pointillée et une étiquette, pour situer une intervention dans le temps.
+const markerPlugin = {
+  id: 'aquariumMarkers',
+  afterDatasetsDraw(chart) {
+    if (!state.markers.length) return;
+    const { ctx, chartArea, scales } = chart;
+    const xScale = scales.x;
+    if (!xScale) return;
+    let lane = 0;
+    let lastX = -Infinity;
+    ctx.save();
+    for (const marker of state.markers) {
+      const ts = Date.parse(marker.timestamp);
+      if (!Number.isFinite(ts) || ts < xScale.min || ts > xScale.max) continue;
+      const x = xScale.getPixelForValue(ts);
+
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = 'rgba(232, 121, 249, 0.75)';
+      ctx.beginPath();
+      ctx.moveTo(x, chartArea.top);
+      ctx.lineTo(x, chartArea.bottom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Étiquettes alternées sur deux niveaux quand deux repères sont proches.
+      lane = x - lastX < 90 ? (lane + 1) % 2 : 0;
+      lastX = x;
+      const label = marker.label || '';
+      ctx.font = '600 10px system-ui, sans-serif';
+      const width = ctx.measureText(label).width + 10;
+      const flip = x + width + 4 > chartArea.right;
+      const bx = flip ? x - width - 3 : x + 3;
+      const by = chartArea.top + 3 + lane * 17;
+
+      ctx.fillStyle = 'rgba(232, 121, 249, 0.9)';
+      ctx.beginPath();
+      ctx.roundRect(bx, by, width, 14, 4);
+      ctx.fill();
+      ctx.fillStyle = '#16101f';
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'left';
+      ctx.fillText(label, bx + 5, by + 7.5);
+    }
+    ctx.restore();
+  },
+};
 
 function buildPanel(canvas, paramIds) {
   const now = Date.now();
@@ -134,6 +199,7 @@ function buildPanel(canvas, paramIds) {
   return new Chart(ctx, {
     type: 'line',
     data: { datasets },
+    plugins: [markerPlugin],
     options: {
       animation: reduced ? false : { duration: 700, easing: 'easeOutQuart' },
       responsive: true,
@@ -195,6 +261,23 @@ function destroyCharts() {
     for (const c of charts) c.destroy();
   }
   state.charts.clear();
+}
+
+// Remet la page à zéro avant un nouveau rendu. Indispensable : `state` vit au
+// niveau du module, donc sans cela `mountSection` croirait les graphes déjà
+// montés (ils pointent vers des canvas retirés du DOM) et les panneaux
+// resteraient vides à la deuxième visite.
+function teardown() {
+  destroyCharts();
+  if (state.observer) {
+    state.observer.disconnect();
+    state.observer = null;
+  }
+  if (state.onResize) {
+    window.removeEventListener('resize', state.onResize);
+    state.onResize = null;
+  }
+  state.sections = [];
 }
 
 // Instancie les graphes d'une section (une seule fois, à l'approche).
@@ -362,7 +445,52 @@ async function loadRange(el) {
   }
 }
 
+// Formulaire « Poser un marqueur » : une ligne verticale étiquetée sur tous
+// les graphiques, pour repérer une intervention (changement d'eau, dosage…).
+export function openMarkerModal(onSaved) {
+  const modal = openModal(
+    'Poser un marqueur',
+    `<form id="marker-form">
+      <label>Étiquette
+        <input type="text" name="label" required maxlength="28" placeholder="Changement d'eau">
+      </label>
+      <label>Date et heure
+        <input type="datetime-local" name="datetime" required value="${datetimeLocalValue(new Date())}">
+      </label>
+      <p class="hint">Le repère apparaît sur tous les graphiques. Retrouvez-le
+      dans « Événements » pour le supprimer.</p>
+      <button type="submit" class="btn primary">Poser le marqueur</button>
+    </form>`
+  );
+  const form = modal.querySelector('#marker-form');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const when = new Date(form.elements.datetime.value);
+    if (Number.isNaN(when.getTime())) {
+      toast('Date invalide.', 'error');
+      return;
+    }
+    const submit = form.querySelector('button[type=submit]');
+    submit.disabled = true;
+    submit.textContent = 'Enregistrement…';
+    try {
+      await addMarker({
+        label: form.elements.label.value.trim(),
+        timestamp: isoWithOffset(when),
+      });
+      modal.close();
+      toast('Marqueur posé', 'success');
+      if (onSaved) onSaved();
+    } catch (err) {
+      toast(err.message, 'error');
+      submit.disabled = false;
+      submit.textContent = 'Poser le marqueur';
+    }
+  });
+}
+
 export async function renderCharts(el, query) {
+  teardown();
   const latest = await loadLatest().catch(() => ({}));
 
   el.classList.add('view-charts');
@@ -381,6 +509,9 @@ export async function renderCharts(el, query) {
           `<button type="button" class="rail-dot" data-index="${i}" aria-label="${escapeHtml(s.label)}"></button>`
       ).join('')}
     </div>
+    <button type="button" class="fab fab-pin" id="add-marker" aria-label="Poser un marqueur">
+      ${icon('pin', 20)}
+    </button>
     <button type="button" class="fab" id="add-measure" aria-label="Ajouter une mesure manuelle">
       ${icon('plus', 24)}
     </button>
@@ -408,6 +539,15 @@ export async function renderCharts(el, query) {
     })
   );
 
+  el.querySelector('#add-marker').addEventListener('click', () =>
+    openMarkerModal(async () => {
+      state.markers = await loadMarkers().catch(() => state.markers);
+      for (const charts of state.charts.values()) {
+        for (const c of charts) c.update('none');
+      }
+    })
+  );
+
   rail.addEventListener('click', (e) => {
     const dot = e.target.closest('.rail-dot');
     if (!dot) return;
@@ -415,9 +555,13 @@ export async function renderCharts(el, query) {
     if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
 
-  // Charge les séries, mesure la géométrie, puis arme les animations.
-  const { series, errors } = await loadMeasurements(state.rangeHours);
+  // Charge séries et marqueurs, mesure la géométrie, puis arme les animations.
+  const [{ series, errors }, markers] = await Promise.all([
+    loadMeasurements(state.rangeHours),
+    loadMarkers().catch(() => []),
+  ]);
   state.series = series;
+  state.markers = markers;
   if (errors > 0) toast('Certaines données n’ont pas pu être chargées.', 'warn');
 
   measureSections(scroller);
@@ -444,10 +588,11 @@ export async function renderCharts(el, query) {
     if (hint && scroller.scrollTop > 40) hint.classList.add('gone');
   };
   scroller.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', () => {
+  state.onResize = () => {
     measureSections(scroller);
     updateParallax(scroller, rail);
-  });
+  };
+  window.addEventListener('resize', state.onResize);
 
   // Position initiale : la section demandée par l'Accueil, sinon la première.
   const wanted = SLIDES.findIndex((s) => s.id === query.get('p'));

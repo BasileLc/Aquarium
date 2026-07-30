@@ -185,3 +185,35 @@ export async function deleteEvent(id) {
   const [removed] = events.splice(index, 1);
   await saveEvents(events, `événement: suppression de ${removed.name}`);
 }
+
+// --- Marqueurs (repères verticaux sur les graphiques) --------------------
+// Écrits par l'app uniquement, comme les événements.
+
+export async function loadMarkers() {
+  return (await readJsonCached('data/markers.json', { ttl: 30000 })) || [];
+}
+
+async function saveMarkers(markers, message) {
+  markers.sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
+  await writeJson('data/markers.json', markers, message);
+  cache.delete('data/markers.json');
+}
+
+export async function addMarker({ label, timestamp, note }) {
+  const markers = (await readJson('data/markers.json', [])) || [];
+  markers.push({
+    id: `mrk_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    label,
+    timestamp,
+    note: note || '',
+  });
+  await saveMarkers(markers, `marqueur: ${label} (${timestamp})`);
+}
+
+export async function deleteMarker(id) {
+  const markers = (await readJson('data/markers.json', [])) || [];
+  const index = markers.findIndex((m) => m.id === id);
+  if (index === -1) throw new Error('Marqueur introuvable (déjà supprimé ailleurs ?).');
+  const [removed] = markers.splice(index, 1);
+  await saveMarkers(markers, `marqueur: suppression de ${removed.label}`);
+}
