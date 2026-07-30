@@ -1,7 +1,14 @@
 // Page Événements : calendrier de maintenance — événements à venir en
 // premier, ajout via formulaire, marquage « fait » et suppression.
-import { loadEvents, addEvent, setEventStatus, deleteEvent } from '../store.js';
-import { escapeHtml, toast, openModal, fmtCountdown } from '../ui.js';
+import {
+  loadEvents,
+  addEvent,
+  setEventStatus,
+  deleteEvent,
+  loadMarkers,
+  deleteMarker,
+} from '../store.js';
+import { escapeHtml, toast, openModal, fmtCountdown, fmtWhen } from '../ui.js';
 import { icon } from '../icons.js';
 
 const MONTHS = ['jan', 'fév', 'mar', 'avr', 'mai', 'juin', 'juil', 'août', 'sep', 'oct', 'nov', 'déc'];
@@ -68,8 +75,22 @@ function openEventModal(onSaved) {
   });
 }
 
+// Marqueurs posés sur les graphiques : listés du plus récent au plus ancien,
+// avec suppression (c'est le seul endroit où on peut les retirer).
+function markerRow(marker) {
+  return `
+    <div class="marker-row" data-marker="${escapeHtml(marker.id)}">
+      ${icon('pin', 15, 'marker-icon')}
+      <span class="marker-label">${escapeHtml(marker.label)}</span>
+      <span class="marker-when">${escapeHtml(fmtWhen(marker.timestamp))}</span>
+      <button type="button" class="icon-btn act-marker-delete" title="Supprimer le marqueur">
+        ${icon('trash', 15)}
+      </button>
+    </div>`;
+}
+
 export async function renderEvents(el) {
-  const events = await loadEvents();
+  const [events, markers] = await Promise.all([loadEvents(), loadMarkers().catch(() => [])]);
   const now = new Date();
   const pad = (n) => String(n).padStart(2, '0');
   const todayStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
@@ -98,6 +119,22 @@ export async function renderEvents(el) {
             </section>`
           : ''
       }
+      ${
+        markers.length
+          ? `<section>
+              <details>
+                <summary>Marqueurs sur les graphiques (${markers.length})</summary>
+                <div class="card marker-list">
+                  ${markers
+                    .slice()
+                    .reverse()
+                    .map(markerRow)
+                    .join('')}
+                </div>
+              </details>
+            </section>`
+          : ''
+      }
     </div>`;
 
   const rerender = () => renderEvents(el).catch((e) => toast(e.message, 'error'));
@@ -105,6 +142,20 @@ export async function renderEvents(el) {
   el.querySelector('#add-event').addEventListener('click', () => openEventModal(rerender));
 
   el.addEventListener('click', async (e) => {
+    const markerRowEl = e.target.closest('.marker-row');
+    if (markerRowEl && e.target.closest('.act-marker-delete')) {
+      const label = markerRowEl.querySelector('.marker-label').textContent.trim();
+      if (!confirm(`Supprimer le marqueur « ${label} » ?`)) return;
+      try {
+        await deleteMarker(markerRowEl.dataset.marker);
+        toast('Marqueur supprimé', 'info');
+        rerender();
+      } catch (err) {
+        toast(err.message, 'error');
+      }
+      return;
+    }
+
     const card = e.target.closest('.event-card');
     if (!card) return;
     const id = card.dataset.id;

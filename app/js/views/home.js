@@ -35,6 +35,44 @@ function eventRow(evt) {
     </div>`;
 }
 
+const MONTHS = ['jan', 'fév', 'mar', 'avr', 'mai', 'juin', 'juil', 'août', 'sep', 'oct', 'nov', 'déc'];
+
+// Bandeau du prochain événement, en tête de l'accueil : le plus proche est mis
+// en avant, les suivants restent lisibles d'un coup d'œil.
+function nextEventsBlock(upcoming) {
+  if (!upcoming.length) {
+    return `
+      <a class="deck deck-next" href="#/events">
+        <div class="next-empty">
+          ${icon('calendar', 18)} Aucun événement planifié
+          <span class="next-cta">Planifier ${icon('chevron-right', 14)}</span>
+        </div>
+      </a>`;
+  }
+  const [first, ...rest] = upcoming;
+  const d = new Date(`${first.date}T00:00:00`);
+  return `
+    <a class="deck deck-next" href="#/events">
+      <div class="next-main">
+        <span class="date-badge">
+          <span class="db-day">${d.getDate()}</span>
+          <span class="db-month">${MONTHS[d.getMonth()]}</span>
+        </span>
+        <span class="next-text">
+          <span class="next-kicker">Prochain événement</span>
+          <span class="next-name">${escapeHtml(first.name)}</span>
+          <span class="next-when">${escapeHtml(fmtDateHuman(first.date))} · ${escapeHtml(fmtCountdown(first.date))}</span>
+        </span>
+        ${icon('chevron-right', 18, 'next-arrow')}
+      </div>
+      ${
+        rest.length
+          ? `<div class="next-rest">${rest.map(eventRow).join('')}</div>`
+          : ''
+      }
+    </a>`;
+}
+
 export async function renderHome(el) {
   const [latest, events, measurements] = await Promise.all([
     loadLatest(),
@@ -81,6 +119,8 @@ export async function renderHome(el) {
       <span class="strip-span">min · max ${GAUGE_HOURS} h</span>
     </div>
 
+    ${nextEventsBlock(upcoming)}
+
     <section class="deck">
       <div class="deck-head"><h2>Sondes Apex</h2></div>
       <div class="gauge-grid">${cells(apexIds, 0)}</div>
@@ -89,14 +129,6 @@ export async function renderHome(el) {
     <section class="deck">
       <div class="deck-head"><h2>Tests manuels</h2></div>
       <div class="gauge-grid">${cells(manualIds, 2)}</div>
-    </section>
-
-    <section class="deck deck-flat">
-      <div class="deck-head"><h2>Événements à venir</h2></div>
-      <a class="events-preview" href="#/events">
-        ${upcoming.length ? upcoming.map(eventRow).join('') : '<div class="empty-hint">Aucun événement planifié</div>'}
-        <span class="events-preview-more">Voir le calendrier ${icon('chevron-right', 15)}</span>
-      </a>
     </section>`;
 
   animateGauges(el);
