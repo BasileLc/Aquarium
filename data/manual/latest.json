@@ -8,9 +8,9 @@
  },
  "no2": {
   "parameter": "no2",
-  "value": 96,
+  "value": 6,
   "unit": "ppb",
-  "timestamp": "2026-07-25T15:30:00-04:00",
+  "timestamp": "2026-07-25T23:30:00-04:00",
   "source": "manuel"
  }
 }
