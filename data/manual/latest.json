@@ -5,5 +5,12 @@
   "unit": "ppm",
   "timestamp": "2026-07-28T23:30:00-04:00",
   "source": "manuel"
+ },
+ "no2": {
+  "parameter": "no2",
+  "value": 25,
+  "unit": "ppb",
+  "timestamp": "2026-07-24T22:00:00-04:00",
+  "source": "manuel"
  }
 }
