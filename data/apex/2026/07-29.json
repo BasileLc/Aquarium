@@ -1,16 +1,16 @@
-{
- "ph": {
+[
+ {
   "parameter": "ph",
   "value": 7.71,
   "unit": "pH",
   "timestamp": "2026-07-29T20:23:25-04:00",
   "source": "apex"
  },
- "orp": {
+ {
   "parameter": "orp",
   "value": 256,
   "unit": "mV",
   "timestamp": "2026-07-29T20:23:25-04:00",
   "source": "apex"
  }
-}
+]
