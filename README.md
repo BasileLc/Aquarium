@@ -150,18 +150,25 @@ sudo systemctl start aquarium-poller
 
 ## L'application
 
-- **Accueil** : valeur actuelle de chaque paramètre avec l'heure du
-  relevé (⚠️ si le dernier relevé Apex date de plus de 35 min). Chaque
-  carte ouvre le graphe du paramètre. En bas, les 3 prochains événements.
-- **Graphiques** : un graphe par paramètre (24 h par défaut, 7 j / 30 j
-  disponibles), navigation par swipe ou flèches, plus deux vues
-  combinées — « Azote » (NH₃ + NO₂ + NO₃) et « Nutriments » (NO₃ + PO₄) —
-  en panneaux empilés sur le même axe de temps (jamais de double axe Y,
-  chaque grandeur garde une échelle honnête). Bouton
+- **Accueil** : les 3 prochains événements en tête, puis une jauge par
+  paramètre — valeur actuelle au centre, min et max des 12 dernières
+  heures de part et d'autre (⚠️ si le dernier relevé Apex date de plus de
+  45 min). Chaque jauge ouvre le graphe du paramètre.
+- **Graphiques** : tous les graphes sur une seule page, en défilement
+  vertical avec accrochage ; le titre et la barre de plages, fixes en
+  haut, suivent le graphe centré. Les sondes continues (température, pH,
+  ORP) offrent 24 h → 30 j, les tests manuels 7 j → 30 j (graduations au
+  jour, sans heure : un test par jour). Une vue combinée
+  « Azote & Phosphate » réunit NH₃, NO₃ et PO₄ en ppm à gauche et NO₂ en
+  ppb sur un second axe à droite — le seul endroit de l'app où deux
+  échelles cohabitent. Un clic sur un point propose de supprimer la
+  mesure (tests manuels seulement) ; le bouton 📌 pose un marqueur
+  vertical étiqueté sur tous les graphes. Bouton
   « ＋ Ajouter une mesure manuelle » (la salinité et la densité SG se
   saisissent ensemble, comme une seule mesure).
 - **Événements** : liste chronologique des événements à venir, ajout,
-  marquage « fait », suppression ; les passés restent consultables.
+  marquage « fait », suppression ; les passés restent consultables. Les
+  marqueurs posés sur les graphes se suppriment depuis cette page.
 - **Réglages** : token GitHub + test d'accès, vidage du cache.
 
 ## Développement local
