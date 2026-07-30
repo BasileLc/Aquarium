@@ -95,6 +95,46 @@ function buildTimeTicks(min, max) {
   return ticks;
 }
 
+const LABEL_H = 16; // hauteur d'une étiquette de marqueur
+const LABEL_LANES = 4; // niveaux d'empilement disponibles
+const LABEL_GAP = 5; // marge horizontale minimale entre deux étiquettes
+
+/**
+ * Place les étiquettes de marqueurs sans chevauchement : chaque étiquette
+ * descend d'un niveau tant que le précédent est encore occupé à cet endroit.
+ * Fonction pure (testable) — `measure` renvoie la largeur d'un texte.
+ * `items` : [{ x, label }] triés par x croissant.
+ */
+export function layoutMarkerLabels(items, area, measure) {
+  const maxWidth = Math.max(60, area.width * 0.45);
+  const laneEnds = new Array(LABEL_LANES).fill(-Infinity);
+  return items.map(({ x, label }) => {
+    // Tronque les étiquettes trop longues plutôt que de laisser déborder.
+    let text = label || '';
+    if (measure(text) + 10 > maxWidth) {
+      while (text.length > 1 && measure(`${text}…`) + 10 > maxWidth) {
+        text = text.slice(0, -1);
+      }
+      text = `${text}…`;
+    }
+    const width = measure(text) + 10;
+    // Près du bord droit, l'étiquette se rabat à gauche de sa ligne.
+    const flip = x + width + 4 > area.right;
+    const bx = flip ? x - width - 3 : x + 3;
+
+    const lane = laneEnds.findIndex((end) => bx >= end + LABEL_GAP);
+    if (lane === -1) {
+      // Tous les niveaux sont pris à cet endroit : mieux vaut masquer
+      // l'étiquette qu'en superposer deux. La ligne du repère reste tracée, et
+      // l'étiquette réapparaît sur une plage plus courte, où les repères
+      // s'écartent (le marqueur reste listé dans « Événements »).
+      return { text, width, bx, by: 0, lane: -1, hidden: true };
+    }
+    laneEnds[lane] = bx + width;
+    return { text, width, bx, by: area.top + 3 + lane * LABEL_H, lane, hidden: false };
+  });
+}
+
 // Repères verticaux (marqueurs) tracés par-dessus les courbes : une ligne
 // pointillée et une étiquette, pour situer une intervention dans le temps.
 const markerPlugin = {
@@ -104,41 +144,44 @@ const markerPlugin = {
     const { ctx, chartArea, scales } = chart;
     const xScale = scales.x;
     if (!xScale) return;
-    let lane = 0;
-    let lastX = -Infinity;
+
     ctx.save();
+    ctx.font = '600 10px system-ui, sans-serif';
+
+    const visible = [];
     for (const marker of state.markers) {
       const ts = Date.parse(marker.timestamp);
       if (!Number.isFinite(ts) || ts < xScale.min || ts > xScale.max) continue;
-      const x = xScale.getPixelForValue(ts);
+      visible.push({ x: xScale.getPixelForValue(ts), label: marker.label || '' });
+    }
+    if (!visible.length) {
+      ctx.restore();
+      return;
+    }
 
-      ctx.setLineDash([4, 4]);
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = 'rgba(232, 121, 249, 0.75)';
+    // Lignes d'abord, étiquettes ensuite : elles restent lisibles par-dessus.
+    ctx.setLineDash([4, 4]);
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(232, 121, 249, 0.75)';
+    for (const { x } of visible) {
       ctx.beginPath();
       ctx.moveTo(x, chartArea.top);
       ctx.lineTo(x, chartArea.bottom);
       ctx.stroke();
-      ctx.setLineDash([]);
+    }
+    ctx.setLineDash([]);
 
-      // Étiquettes alternées sur deux niveaux quand deux repères sont proches.
-      lane = x - lastX < 90 ? (lane + 1) % 2 : 0;
-      lastX = x;
-      const label = marker.label || '';
-      ctx.font = '600 10px system-ui, sans-serif';
-      const width = ctx.measureText(label).width + 10;
-      const flip = x + width + 4 > chartArea.right;
-      const bx = flip ? x - width - 3 : x + 3;
-      const by = chartArea.top + 3 + lane * 17;
-
-      ctx.fillStyle = 'rgba(232, 121, 249, 0.9)';
+    const placed = layoutMarkerLabels(visible, chartArea, (t) => ctx.measureText(t).width);
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'left';
+    for (const { text, width, bx, by, hidden } of placed) {
+      if (hidden) continue;
+      ctx.fillStyle = 'rgba(232, 121, 249, 0.92)';
       ctx.beginPath();
       ctx.roundRect(bx, by, width, 14, 4);
       ctx.fill();
       ctx.fillStyle = '#16101f';
-      ctx.textBaseline = 'middle';
-      ctx.textAlign = 'left';
-      ctx.fillText(label, bx + 5, by + 7.5);
+      ctx.fillText(text, bx + 5, by + 7.5);
     }
     ctx.restore();
   },
@@ -237,7 +280,7 @@ function handleChartClick(event, chart, paramIds) {
   openDeleteMeasureModal(paramId, new Date(point.x).toISOString(), point.y);
 }
 
-function buildPanel(canvas, paramIds) {
+function buildPanel(canvas, paramIds, showLegend = false) {
   const now = Date.now();
   const min = now - state.rangeHours * 3600 * 1000;
   const multi = paramIds.length > 1;
@@ -250,6 +293,31 @@ function buildPanel(canvas, paramIds) {
     const fill = ctx.createLinearGradient(0, 0, 0, canvas.clientHeight || 240);
     fill.addColorStop(0, `${p.color}59`);
     fill.addColorStop(1, `${p.color}00`);
+
+    if (!dense) {
+      // Tests manuels : une mesure par jour au mieux. Les points sont marqués
+      // et seulement suggérés par un trait pointillé — un trait plein (ou une
+      // aire remplie) laisserait croire à des valeurs mesurées entre deux
+      // relevés, ce qui donnait cet aspect de paliers continus.
+      return {
+        label: p.short,
+        data: state.series[id] || [],
+        borderColor: `${p.color}88`,
+        backgroundColor: p.color,
+        borderDash: [5, 5],
+        borderWidth: 1.6,
+        fill: false,
+        tension: 0,
+        pointRadius: 4.5,
+        pointHoverRadius: 7,
+        pointHitRadius: 14,
+        pointBackgroundColor: p.color,
+        pointBorderColor: 'rgba(9, 22, 36, 0.9)',
+        pointBorderWidth: 1.5,
+        spanGaps: true,
+      };
+    }
+
     return {
       label: p.short,
       data: state.series[id] || [],
@@ -257,14 +325,13 @@ function buildPanel(canvas, paramIds) {
       backgroundColor: fill,
       fill: multi ? false : 'origin',
       borderWidth: 2.4,
-      pointRadius: dense ? 0 : 3.5,
+      pointRadius: 0,
       pointHoverRadius: 6,
       pointHitRadius: 12,
       pointBackgroundColor: p.color,
       tension: 0.3,
-      // Coupe la ligne Apex si le poller a été absent > 45 min ;
-      // relie toujours les points manuels (mesures espacées).
-      spanGaps: dense ? 45 * 60 * 1000 : true,
+      // Coupe la ligne si le poller a été absent plus de 45 min.
+      spanGaps: 45 * 60 * 1000,
     };
   });
 
@@ -332,7 +399,7 @@ function buildPanel(canvas, paramIds) {
       },
       plugins: {
         legend: {
-          display: multi,
+          display: multi || showLegend,
           labels: { color: CHROME.text, usePointStyle: true, pointStyle: 'line', boxHeight: 8, font: { size: 12 } },
         },
         tooltip: {
@@ -389,7 +456,7 @@ function mountSection(section) {
   const charts = [];
   slide.panels.forEach((ids, i) => {
     const canvas = section.querySelector(`canvas[data-panel="${i}"]`);
-    if (canvas) charts.push(buildPanel(canvas, ids));
+    if (canvas) charts.push(buildPanel(canvas, ids, slide.panels.length > 1));
     const empty = section.querySelector(`.chart-empty[data-empty="${i}"]`);
     if (empty) empty.hidden = ids.some((id) => (state.series[id] || []).length > 0);
   });
