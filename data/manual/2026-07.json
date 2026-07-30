@@ -33,5 +33,12 @@
   "unit": "ppm",
   "timestamp": "2026-07-27T23:30:00-04:00",
   "source": "manuel"
+ },
+ {
+  "parameter": "nh3",
+  "value": 0.55,
+  "unit": "ppm",
+  "timestamp": "2026-07-28T23:30:00-04:00",
+  "source": "manuel"
  }
 ]
