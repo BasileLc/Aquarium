@@ -23,7 +23,7 @@ export const PARAMS = {
   no3:      { label: 'Nitrates',    short: 'NO₃',  unit: 'ppm', source: 'apex',   color: '#22d3ee', grad: ['#38bdf8', '#22d3ee'], decimals: 1, placeholder: '5.0' },
   po4:      { label: 'Phosphates',  short: 'PO₄',  unit: 'ppm', source: 'apex',   color: '#c084fc', grad: ['#e879f9', '#c084fc'], decimals: 2, placeholder: '0.03' },
   nh3:      { label: 'Ammoniaque',  short: 'NH₃',  unit: 'ppm', source: 'manuel', color: '#60a5fa', grad: ['#38bdf8', '#60a5fa'], decimals: 2, placeholder: '0.00' },
-  no2:      { label: 'Nitrites',    short: 'NO₂',  unit: 'ppm', source: 'manuel', color: '#fb923c', grad: ['#fbbf24', '#fb923c'], decimals: 2, placeholder: '0.00' },
+  no2:      { label: 'Nitrites',    short: 'NO₂',  unit: 'ppb', source: 'manuel', color: '#fb923c', grad: ['#fbbf24', '#fb923c'], decimals: 0, placeholder: '20' },
   alk:      { label: 'Alcalinité',  short: 'KH',   unit: 'dKH', source: 'manuel', color: '#e879f9', grad: ['#f0abfc', '#e879f9'], decimals: 1, placeholder: '8.5' },
   salinity: { label: 'Salinité',    short: 'Sal.', unit: 'ppt', source: 'manuel', color: '#818cf8', grad: ['#60a5fa', '#818cf8'], decimals: 1, placeholder: '35.0' },
   sg:       { label: 'Densité',     short: 'SG',   unit: '',    source: 'manuel', color: '#5eead4', grad: ['#7dd3fc', '#5eead4'], decimals: 3, placeholder: '1.026' },
@@ -32,7 +32,7 @@ export const PARAMS = {
 // Graphes combinés : des panneaux à axe Y unique, empilés et alignés sur le
 // même axe temps (jamais de double axe Y sur un même panneau).
 export const COMBINED = [
-  { id: 'nitrogen',  label: 'Azote', sub: 'NH₃ · NO₂ · NO₃', panels: [['nh3', 'no2'], ['no3']] },
+  { id: 'nitrogen',  label: 'Azote', sub: 'NH₃ · NO₂ · NO₃', panels: [['nh3'], ['no2'], ['no3']] },
   { id: 'nutrients', label: 'Nutriments', sub: 'NO₃ · PO₄',  panels: [['no3'], ['po4']] },
 ];
 
