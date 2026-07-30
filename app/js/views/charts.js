@@ -1,8 +1,8 @@
-// Page Graphiques : un graphe par paramètre + graphes combinés (panneaux
-// empilés sur le même axe temps), swipe dynamique qui suit le doigt,
-// plage de temps réglable (24 h par défaut) et saisie de mesures manuelles.
+// Page Graphiques : tous les graphes sur une seule page, en défilement
+// vertical avec accrochage et transitions pilotées par le scroll (profondeur,
+// échelle et opacité suivent la position de chaque section).
 import { PARAMS, COMBINED, MANUAL_FORMS, RANGES } from '../config.js';
-import { loadMeasurements, addManualMeasurements } from '../store.js';
+import { loadMeasurements, loadLatest, addManualMeasurements } from '../store.js';
 import {
   escapeHtml,
   toast,
@@ -14,29 +14,38 @@ import {
 import { icon } from '../icons.js';
 
 const SLIDES = [
-  ...Object.keys(PARAMS).map((id) => ({ type: 'param', id, label: PARAMS[id].label, panels: [[id]] })),
-  ...COMBINED.map((c) => ({ type: 'combined', ...c })),
+  ...Object.keys(PARAMS).map((id) => ({
+    id,
+    label: PARAMS[id].label,
+    sub: PARAMS[id].source === 'apex' ? 'sonde Apex' : 'test manuel',
+    color: PARAMS[id].color,
+    panels: [[id]],
+  })),
+  ...COMBINED.map((c) => ({ ...c, color: PARAMS[c.panels[0][0]].color })),
 ];
 
 const CHROME = {
-  text: '#b6c4cf',
-  muted: '#8b98a5',
-  grid: '#24313f',
-  axis: '#33455a',
-  tooltipBg: '#1d2c3c',
+  text: '#c3d8ec',
+  muted: '#8aa4bf',
+  grid: 'rgba(125, 211, 252, 0.09)',
+  axis: 'rgba(125, 211, 252, 0.2)',
+  tooltipBg: '#1d3550',
 };
 
 const state = {
-  index: 0,
   rangeHours: 24,
-  charts: [],
+  charts: new Map(), // index de slide → [Chart, …]
+  series: {},
+  sections: [],
+  observer: null,
+  onScroll: null,
 };
 
 const pad = (n) => String(n).padStart(2, '0');
 
-function fmtTick(ms, rangeHours) {
+function fmtTick(ms) {
   const d = new Date(ms);
-  if (rangeHours <= 24) return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  if (state.rangeHours <= 24) return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
   return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}`;
 }
 
@@ -45,13 +54,12 @@ function fmtTooltipTitle(ms) {
   return `${pad(d.getDate())}/${pad(d.getMonth() + 1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-// Graduations de l'axe temps à heures/jours ronds : toutes les 6 h en vue
-// 24 h, chaque jour en vue 7 j, tous les 5 jours en vue 30 j.
-function buildTimeTicks(min, max, rangeHours) {
+// Graduations de l'axe temps à heures/jours ronds.
+function buildTimeTicks(min, max) {
   const ticks = [];
   const cursor = new Date(min);
   cursor.setMinutes(0, 0, 0);
-  if (rangeHours <= 24) {
+  if (state.rangeHours <= 24) {
     cursor.setHours(cursor.getHours() - (cursor.getHours() % 6));
     let t = cursor.getTime();
     while (t <= max) {
@@ -60,7 +68,7 @@ function buildTimeTicks(min, max, rangeHours) {
     }
   } else {
     cursor.setHours(0, 0, 0, 0);
-    const stepDays = rangeHours <= 24 * 7 ? 1 : 5;
+    const stepDays = state.rangeHours <= 24 * 7 ? 1 : 5;
     while (cursor.getTime() <= max) {
       if (cursor.getTime() >= min) ticks.push(cursor.getTime());
       cursor.setDate(cursor.getDate() + stepDays);
@@ -69,28 +77,31 @@ function buildTimeTicks(min, max, rangeHours) {
   return ticks;
 }
 
-function destroyCharts() {
-  for (const c of state.charts) c.destroy();
-  state.charts = [];
-}
-
-function buildPanel(canvas, paramIds, series, rangeHours) {
+function buildPanel(canvas, paramIds) {
   const now = Date.now();
-  const min = now - rangeHours * 3600 * 1000;
+  const min = now - state.rangeHours * 3600 * 1000;
   const multi = paramIds.length > 1;
+  const ctx = canvas.getContext('2d');
+
   const datasets = paramIds.map((id) => {
     const p = PARAMS[id];
     const dense = p.source === 'apex';
+    // Dégradé vertical sous la courbe : donne du corps sans masquer la grille.
+    const fill = ctx.createLinearGradient(0, 0, 0, canvas.clientHeight || 240);
+    fill.addColorStop(0, `${p.color}59`);
+    fill.addColorStop(1, `${p.color}00`);
     return {
       label: p.short,
-      data: series[id] || [],
+      data: state.series[id] || [],
       borderColor: p.color,
-      backgroundColor: p.color,
-      borderWidth: 2,
+      backgroundColor: fill,
+      fill: multi ? false : 'origin',
+      borderWidth: 2.4,
       pointRadius: dense ? 0 : 3.5,
-      pointHoverRadius: 5,
-      pointHitRadius: 10,
-      tension: 0.25,
+      pointHoverRadius: 6,
+      pointHitRadius: 12,
+      pointBackgroundColor: p.color,
+      tension: 0.3,
       // Coupe la ligne Apex si le poller a été absent > 45 min ;
       // relie toujours les points manuels (mesures espacées).
       spanGaps: dense ? 45 * 60 * 1000 : true,
@@ -100,12 +111,11 @@ function buildPanel(canvas, paramIds, series, rangeHours) {
   const unit = PARAMS[paramIds[0]].unit;
 
   // Bornes Y : marge de 12 % autour des données, sans jamais descendre sous
-  // zéro pour des grandeurs positives (ppm, dKH…). Les données négatives
-  // réelles (ex. ORP) restent affichées telles quelles.
+  // zéro pour des grandeurs positives (ppm, dKH…).
   let dataMin = Infinity;
   let dataMax = -Infinity;
   for (const id of paramIds) {
-    for (const point of series[id] || []) {
+    for (const point of state.series[id] || []) {
       if (point.y < dataMin) dataMin = point.y;
       if (point.y > dataMax) dataMax = point.y;
     }
@@ -120,17 +130,18 @@ function buildPanel(canvas, paramIds, series, rangeHours) {
     suggestedMax = dataMax + padding;
   }
 
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const chart = new Chart(canvas.getContext('2d'), {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return new Chart(ctx, {
     type: 'line',
     data: { datasets },
     options: {
-      animation: reducedMotion ? false : { duration: 420, easing: 'easeOutQuart' },
+      animation: reduced ? false : { duration: 700, easing: 'easeOutQuart' },
       responsive: true,
       maintainAspectRatio: false,
       parsing: false,
       normalized: true,
       interaction: { mode: 'nearest', axis: 'x', intersect: false },
+      layout: { padding: { top: 6, right: 4 } },
       scales: {
         x: {
           type: 'linear',
@@ -139,41 +150,33 @@ function buildPanel(canvas, paramIds, series, rangeHours) {
           border: { color: CHROME.axis },
           grid: { color: CHROME.grid, drawTicks: false },
           afterBuildTicks: (axis) => {
-            axis.ticks = buildTimeTicks(axis.min, axis.max, state.rangeHours).map((value) => ({ value }));
+            axis.ticks = buildTimeTicks(axis.min, axis.max).map((value) => ({ value }));
           },
-          ticks: {
-            color: CHROME.muted,
-            maxRotation: 0,
-            callback: (v) => fmtTick(v, state.rangeHours),
-          },
+          ticks: { color: CHROME.muted, maxRotation: 0, font: { size: 11 }, callback: (v) => fmtTick(v) },
         },
         y: {
-          border: { color: CHROME.axis },
+          border: { display: false },
           grid: { color: CHROME.grid, drawTicks: false },
           suggestedMin,
           suggestedMax,
-          title: {
-            display: Boolean(unit),
-            text: unit,
-            color: CHROME.muted,
-            font: { size: 11 },
-          },
-          ticks: { color: CHROME.muted, maxTicksLimit: 6 },
+          title: { display: Boolean(unit), text: unit, color: CHROME.muted, font: { size: 11 } },
+          ticks: { color: CHROME.muted, maxTicksLimit: 5, font: { size: 11 } },
         },
       },
       plugins: {
         legend: {
           display: multi,
-          labels: { color: CHROME.text, usePointStyle: true, pointStyle: 'line', boxHeight: 8 },
+          labels: { color: CHROME.text, usePointStyle: true, pointStyle: 'line', boxHeight: 8, font: { size: 12 } },
         },
         tooltip: {
           backgroundColor: CHROME.tooltipBg,
-          titleColor: '#eef4f8',
+          titleColor: '#eff8ff',
           bodyColor: CHROME.text,
-          borderColor: 'rgba(255,255,255,0.12)',
+          borderColor: 'rgba(125, 211, 252, 0.25)',
           borderWidth: 1,
-          cornerRadius: 10,
-          padding: 10,
+          cornerRadius: 12,
+          padding: 11,
+          displayColors: multi,
           callbacks: {
             title: (items) => (items.length ? fmtTooltipTitle(items[0].parsed.x) : ''),
             label: (item) => {
@@ -185,66 +188,63 @@ function buildPanel(canvas, paramIds, series, rangeHours) {
       },
     },
   });
-  state.charts.push(chart);
 }
 
-// `direction` : -1 = venir de droite, +1 = venir de gauche, 0 = sans effet.
-async function drawSlide(root, direction = 0) {
-  const slide = SLIDES[state.index];
-  root.querySelector('#chart-title').textContent = slide.label;
-  root.querySelector('#slide-pos').textContent = `${state.index + 1} / ${SLIDES.length}`;
-  history.replaceState(null, '', `#/charts?p=${slide.id}`);
-
-  for (const dot of root.querySelectorAll('.dot')) {
-    dot.classList.toggle('active', Number(dot.dataset.index) === state.index);
+function destroyCharts() {
+  for (const charts of state.charts.values()) {
+    for (const c of charts) c.destroy();
   }
-  for (const btn of root.querySelectorAll('.range-btn')) {
-    btn.classList.toggle('active', Number(btn.dataset.hours) === state.rangeHours);
-  }
+  state.charts.clear();
+}
 
-  destroyCharts();
-  const host = root.querySelector('#panels');
-  host.classList.remove('slide-in-left', 'slide-in-right', 'settle', 'dragging');
-  host.style.transform = '';
-  host.style.opacity = '';
-  host.innerHTML = '<div class="chart-loading">Chargement des données…</div>';
-
-  const { series, errors } = await loadMeasurements(state.rangeHours);
-  // L'utilisateur a pu changer de slide pendant le chargement.
-  if (SLIDES[state.index] !== slide) return;
-  if (errors > 0) toast('Certaines données n’ont pas pu être chargées.', 'warn');
-
-  const hasData = slide.panels.some((ids) => ids.some((id) => (series[id] || []).length > 0));
-  host.innerHTML = slide.panels
-    .map(
-      (ids, i) => `
-      <div class="panel ${slide.panels.length > 1 ? 'panel-half' : 'panel-full'}">
-        <canvas id="panel-canvas-${i}"></canvas>
-      </div>`
-    )
-    .join('');
-  if (!hasData) {
-    host.insertAdjacentHTML(
-      'beforeend',
-      `<div class="chart-empty">${icon('waves', 30)}<span>Aucune donnée sur cette période</span></div>`
-    );
-  }
-  if (direction !== 0) {
-    host.classList.add(direction > 0 ? 'slide-in-right' : 'slide-in-left');
-    setTimeout(() => host.classList.remove('slide-in-right', 'slide-in-left'), 360);
-  }
+// Instancie les graphes d'une section (une seule fois, à l'approche).
+function mountSection(section) {
+  const index = Number(section.dataset.index);
+  if (state.charts.has(index)) return;
+  const slide = SLIDES[index];
+  const charts = [];
   slide.panels.forEach((ids, i) => {
-    buildPanel(host.querySelector(`#panel-canvas-${i}`), ids, series, state.rangeHours);
+    const canvas = section.querySelector(`canvas[data-panel="${i}"]`);
+    if (canvas) charts.push(buildPanel(canvas, ids));
+    const empty = section.querySelector(`.chart-empty[data-empty="${i}"]`);
+    if (empty) empty.hidden = ids.some((id) => (state.series[id] || []).length > 0);
   });
+  state.charts.set(index, charts);
 }
 
-function goTo(root, index, direction = 0) {
-  state.index = (index + SLIDES.length) % SLIDES.length;
-  drawSlide(root, direction).catch((e) => toast(e.message, 'error'));
+// Publie la position relative de chaque section ; le CSS en tire l'échelle,
+// la profondeur et l'opacité (transitions fluides pendant le défilement).
+function updateParallax(scroller, rail) {
+  const viewH = scroller.clientHeight || 1;
+  const center = scroller.scrollTop + viewH / 2;
+  let bestIndex = 0;
+  let bestDist = Infinity;
+  for (const s of state.sections) {
+    const d = (s.top + s.height / 2 - center) / viewH;
+    const a = Math.min(1, Math.abs(d));
+    s.el.style.setProperty('--d', d.toFixed(3));
+    s.el.style.setProperty('--a', a.toFixed(3));
+    if (a < bestDist) {
+      bestDist = a;
+      bestIndex = s.index;
+    }
+  }
+  for (const dot of rail.children) {
+    dot.classList.toggle('active', Number(dot.dataset.index) === bestIndex);
+  }
 }
 
-// Formulaire « Ajouter une mesure manuelle ». `onSaved` est appelé après
-// enregistrement avec l'id du premier paramètre saisi.
+function measureSections(scroller) {
+  state.sections = [...scroller.querySelectorAll('.chart-section')].map((el) => ({
+    el,
+    index: Number(el.dataset.index),
+    top: el.offsetTop,
+    height: el.offsetHeight,
+  }));
+}
+
+// Formulaire « Ajouter une mesure manuelle ». `onSaved` reçoit l'id du
+// premier paramètre saisi.
 export function openMeasureModal(onSaved) {
   const options = MANUAL_FORMS.map(
     (f) => `<option value="${f.id}">${escapeHtml(f.label)}</option>`
@@ -307,7 +307,7 @@ export function openMeasureModal(onSaved) {
     try {
       await addManualMeasurements(measurements);
       modal.close();
-      toast('Mesure enregistrée ✓', 'success');
+      toast('Mesure enregistrée', 'success');
       if (onSaved) onSaved(choice.params[0]);
     } catch (err) {
       toast(err.message, 'error');
@@ -317,128 +317,144 @@ export function openMeasureModal(onSaved) {
   });
 }
 
-// Swipe dynamique : le contenu suit le doigt, puis bascule ou revient
-// élastiquement selon l'amplitude du geste.
-function attachSwipe(root, panels) {
-  let startX = 0;
-  let startY = 0;
-  let dragX = 0;
-  let horizontal = null;
+function sectionHtml(slide, index, latest) {
+  const value = latest[slide.id];
+  const p = PARAMS[slide.id];
+  const head =
+    p && value && value.value !== undefined
+      ? `<span class="sec-now">${fmtValue(value.value, p)}<i>${escapeHtml(p.unit)}</i></span>`
+      : '';
+  return `
+    <section class="chart-section" data-index="${index}" data-slide="${slide.id}" style="--pc:${slide.color}">
+      <div class="sec-head">
+        <div>
+          <div class="sec-title">${escapeHtml(slide.label)}</div>
+          <div class="sec-sub">${escapeHtml(slide.sub || '')}</div>
+        </div>
+        ${head}
+      </div>
+      <div class="sec-body">
+        ${slide.panels
+          .map(
+            (ids, i) => `<div class="sec-panel">
+              <canvas data-panel="${i}"></canvas>
+              <div class="chart-empty" data-empty="${i}" hidden>
+                ${icon('waves', 26)}<span>Aucune donnée sur cette période</span>
+              </div>
+            </div>`
+          )
+          .join('')}
+      </div>
+    </section>`;
+}
 
-  panels.addEventListener(
-    'touchstart',
-    (e) => {
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      horizontal = null;
-      dragX = 0;
-    },
-    { passive: true }
-  );
-
-  panels.addEventListener(
-    'touchmove',
-    (e) => {
-      const dx = e.touches[0].clientX - startX;
-      const dy = e.touches[0].clientY - startY;
-      if (horizontal === null && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
-        horizontal = Math.abs(dx) > Math.abs(dy) * 1.2;
-      }
-      if (!horizontal) return;
-      dragX = dx;
-      panels.classList.add('dragging');
-      panels.style.transform = `translateX(${dragX}px)`;
-      panels.style.opacity = String(Math.max(0.4, 1 - Math.abs(dragX) / 380));
-    },
-    { passive: true }
-  );
-
-  panels.addEventListener(
-    'touchend',
-    () => {
-      if (!horizontal) return;
-      panels.classList.remove('dragging');
-      if (Math.abs(dragX) > 70) {
-        const direction = dragX < 0 ? 1 : -1;
-        goTo(root, state.index + direction, direction);
-      } else {
-        // Retour élastique.
-        panels.classList.add('settle');
-        panels.style.transform = '';
-        panels.style.opacity = '';
-        setTimeout(() => panels.classList.remove('settle'), 320);
-      }
-      dragX = 0;
-      horizontal = null;
-    },
-    { passive: true }
-  );
+async function loadRange(el) {
+  const { series, errors } = await loadMeasurements(state.rangeHours);
+  state.series = series;
+  if (errors > 0) toast('Certaines données n’ont pas pu être chargées.', 'warn');
+  destroyCharts();
+  // Réinstancie ce qui est à l'écran ; le reste suivra à l'approche.
+  for (const s of state.sections) {
+    const rect = s.el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 1.5 && rect.bottom > -window.innerHeight * 0.5) {
+      mountSection(s.el);
+    }
+  }
 }
 
 export async function renderCharts(el, query) {
-  const wanted = query.get('p');
-  const found = SLIDES.findIndex((s) => s.id === wanted);
-  if (found >= 0) state.index = found;
-  if (state.index >= SLIDES.length) state.index = 0;
+  const latest = await loadLatest().catch(() => ({}));
 
+  el.classList.add('view-charts');
   el.innerHTML = `
-    <div class="charts-page">
-      <div class="chart-nav">
-        <button type="button" class="icon-btn" id="prev-slide" aria-label="Graphe précédent">${icon('chevron-left', 22)}</button>
-        <div class="chart-heading">
-          <div id="chart-title" class="chart-title"></div>
-          <div id="slide-pos" class="slide-pos"></div>
-        </div>
-        <button type="button" class="icon-btn" id="next-slide" aria-label="Graphe suivant">${icon('chevron-right', 22)}</button>
-      </div>
-      <div class="dots" id="dots">
-        ${SLIDES.map(
-          (s, i) =>
-            `<button type="button" class="dot" data-index="${i}" aria-label="${escapeHtml(s.label)}"></button>`
-        ).join('')}
-      </div>
-      <div class="range-picker">
-        ${RANGES.map(
-          (r) =>
-            `<button type="button" class="range-btn" data-hours="${r.hours}">${r.label}</button>`
-        ).join('')}
-      </div>
-      <div class="slide-stage">
-        <div id="panels" class="panels"></div>
-      </div>
-      <button type="button" class="btn primary" id="add-measure">${icon('plus', 18)} Ajouter une mesure manuelle</button>
-    </div>`;
+    <div class="range-bar">
+      ${RANGES.map(
+        (r) => `<button type="button" class="range-btn" data-hours="${r.hours}">${r.label}</button>`
+      ).join('')}
+    </div>
+    <div class="chart-scroller" id="scroller">
+      ${SLIDES.map((s, i) => sectionHtml(s, i, latest)).join('')}
+    </div>
+    <div class="rail" id="rail">
+      ${SLIDES.map(
+        (s, i) =>
+          `<button type="button" class="rail-dot" data-index="${i}" aria-label="${escapeHtml(s.label)}"></button>`
+      ).join('')}
+    </div>
+    <button type="button" class="fab" id="add-measure" aria-label="Ajouter une mesure manuelle">
+      ${icon('plus', 24)}
+    </button>
+    <div class="scroll-hint" id="scroll-hint">${icon('chevron-right', 16)} défilez</div>`;
 
-  el.querySelector('#prev-slide').addEventListener('click', () => goTo(el, state.index - 1, -1));
-  el.querySelector('#next-slide').addEventListener('click', () => goTo(el, state.index + 1, 1));
-  el.querySelector('#dots').addEventListener('click', (e) => {
-    const dot = e.target.closest('.dot');
-    if (dot) goTo(el, Number(dot.dataset.index));
-  });
+  const scroller = el.querySelector('#scroller');
+  const rail = el.querySelector('#rail');
+
   for (const btn of el.querySelectorAll('.range-btn')) {
-    btn.addEventListener('click', () => {
+    btn.classList.toggle('active', Number(btn.dataset.hours) === state.rangeHours);
+    btn.addEventListener('click', async () => {
+      if (Number(btn.dataset.hours) === state.rangeHours) return;
       state.rangeHours = Number(btn.dataset.hours);
-      drawSlide(el).catch((err) => toast(err.message, 'error'));
+      for (const b of el.querySelectorAll('.range-btn')) {
+        b.classList.toggle('active', Number(b.dataset.hours) === state.rangeHours);
+      }
+      await loadRange(el).catch((err) => toast(err.message, 'error'));
     });
   }
+
   el.querySelector('#add-measure').addEventListener('click', () =>
     openMeasureModal((paramId) => {
-      const i = SLIDES.findIndex((s) => s.id === paramId);
-      goTo(el, i >= 0 ? i : state.index);
+      location.hash = `#/charts?p=${paramId}`;
+      renderCharts(el, new URLSearchParams(`p=${paramId}`)).catch((e) => toast(e.message, 'error'));
     })
   );
 
-  attachSwipe(el, el.querySelector('#panels'));
+  rail.addEventListener('click', (e) => {
+    const dot = e.target.closest('.rail-dot');
+    if (!dot) return;
+    const target = scroller.querySelector(`.chart-section[data-index="${dot.dataset.index}"]`);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
 
-  const onKey = (e) => {
-    if (!document.body.contains(el)) {
-      document.removeEventListener('keydown', onKey);
-      return;
-    }
-    if (e.key === 'ArrowLeft') goTo(el, state.index - 1, -1);
-    if (e.key === 'ArrowRight') goTo(el, state.index + 1, 1);
+  // Charge les séries, mesure la géométrie, puis arme les animations.
+  const { series, errors } = await loadMeasurements(state.rangeHours);
+  state.series = series;
+  if (errors > 0) toast('Certaines données n’ont pas pu être chargées.', 'warn');
+
+  measureSections(scroller);
+
+  state.observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) mountSection(entry.target);
+      }
+    },
+    { root: scroller, rootMargin: '60% 0px' }
+  );
+  for (const s of state.sections) state.observer.observe(s.el);
+
+  const hint = el.querySelector('#scroll-hint');
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      updateParallax(scroller, rail);
+      ticking = false;
+    });
+    if (hint && scroller.scrollTop > 40) hint.classList.add('gone');
   };
-  document.addEventListener('keydown', onKey);
+  scroller.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', () => {
+    measureSections(scroller);
+    updateParallax(scroller, rail);
+  });
 
-  await drawSlide(el);
+  // Position initiale : la section demandée par l'Accueil, sinon la première.
+  const wanted = SLIDES.findIndex((s) => s.id === query.get('p'));
+  if (wanted > 0) {
+    const target = state.sections.find((s) => s.index === wanted);
+    if (target) scroller.scrollTop = target.top + target.height / 2 - scroller.clientHeight / 2;
+  }
+  updateParallax(scroller, rail);
+  mountSection(state.sections[Math.max(0, wanted)].el);
 }
