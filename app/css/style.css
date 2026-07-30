@@ -686,6 +686,18 @@ body {
   overflow: hidden;
 }
 
+/* En-tête du graphe centré : hors du conteneur défilant, donc jamais rogné
+   par son bord, et toujours accordé à la barre de plages juste dessous. */
+.chart-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 18px 0;
+  min-height: 48px;
+  flex: none;
+}
+
 .range-bar {
   display: flex;
   justify-content: center;
@@ -699,7 +711,8 @@ body {
   to { opacity: 1; transform: none; }
 }
 
-.range-bar.bar-swap { animation: bar-swap 0.28s var(--ease-out); }
+.range-bar.bar-swap,
+.chart-head.bar-swap { animation: bar-swap 0.28s var(--ease-out); }
 
 .range-btn {
   padding: 7px 13px;
@@ -754,15 +767,6 @@ body {
   opacity: calc(1 - var(--a, 0) * 0.72);
   transform-origin: 50% 50%;
   will-change: transform, opacity;
-}
-
-.sec-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 0 4px 10px;
-  flex: none;
 }
 
 .sec-title {

@@ -33,6 +33,9 @@ const SLIDES = [
     sub: PARAMS[id].source === 'apex' ? 'sonde Apex' : 'test manuel',
     color: PARAMS[id].color,
     rangeSet: PARAMS[id].rangeSet || 'fine',
+    // Un test manuel se fait une fois par jour : ni les graduations ni
+    // l'infobulle n'ont à afficher d'heure.
+    dayTicks: Boolean(PARAMS[id].dayTicks),
     panels: [[id]],
   })),
   ...COMBINED.map((c) => ({ ...c, color: PARAMS[c.panels[0][0]].color })),
@@ -54,8 +57,10 @@ const state = {
   markers: [],
   sections: [],
   observer: null,
-  onResize: null,
+  sizeObserver: null,
   activeSet: null,
+  latest: {}, // dernier relevé par paramètre, pour l'en-tête
+  headIndex: null, // slide dont l'en-tête est affiché
 };
 
 const pad = (n) => String(n).padStart(2, '0');
@@ -80,9 +85,11 @@ function fmtTick(ms, hours, dayOnly) {
   return day;
 }
 
-function fmtTooltipTitle(ms) {
+function fmtTooltipTitle(ms, dayOnly) {
   const d = new Date(ms);
-  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const day = `${pad(d.getDate())}/${pad(d.getMonth() + 1)}`;
+  if (dayOnly) return day;
+  return `${day} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 // Graduations de l'axe temps à heures/jours ronds : toutes les 6 h sur 24 h,
@@ -400,7 +407,7 @@ function buildPanel(canvas, paramIds, opts) {
           padding: 11,
           displayColors: multi,
           callbacks: {
-            title: (items) => (items.length ? fmtTooltipTitle(items[0].parsed.x) : ''),
+            title: (items) => (items.length ? fmtTooltipTitle(items[0].parsed.x, dayTicks) : ''),
             label: (item) => {
               const p = PARAMS[paramIds[item.datasetIndex]];
               return ` ${p.short} : ${fmtValue(item.parsed.y, p)}${p.unit ? ` ${p.unit}` : ''}`;
@@ -432,12 +439,13 @@ function teardown() {
     state.observer.disconnect();
     state.observer = null;
   }
-  if (state.onResize) {
-    window.removeEventListener('resize', state.onResize);
-    state.onResize = null;
+  if (state.sizeObserver) {
+    state.sizeObserver.disconnect();
+    state.sizeObserver = null;
   }
   state.sections = [];
   state.activeSet = null;
+  state.headIndex = null;
 }
 
 // Instancie (ou réinstancie, si la plage a changé) les graphes d'une section.
@@ -680,6 +688,32 @@ export function openMarkerModal(onSaved) {
   });
 }
 
+// En-tête du graphe centré. Il vit hors du conteneur défilant : dans la
+// section, la ligne de titre pouvait être rognée par le bord du scroller (le
+// dernier graphe perdait son titre) et se retrouvait décalée de la barre de
+// plages, qui suit elle aussi le graphe centré.
+function syncHeader(head, index) {
+  if (!head || state.headIndex === index) return;
+  state.headIndex = index;
+  const slide = SLIDES[index];
+  const p = PARAMS[slide.id];
+  const value = state.latest[slide.id];
+  const now =
+    p && value && value.value !== undefined
+      ? `<span class="sec-now">${fmtValue(value.value, p)}<i>${escapeHtml(p.unit)}</i></span>`
+      : '';
+  head.style.setProperty('--pc', slide.color);
+  head.innerHTML = `
+    <div>
+      <div class="sec-title">${escapeHtml(slide.label)}</div>
+      <div class="sec-sub">${escapeHtml(slide.sub || '')}</div>
+    </div>
+    ${now}`;
+  head.classList.remove('bar-swap');
+  void head.offsetWidth;
+  head.classList.add('bar-swap');
+}
+
 // Barre de plages : n'affiche que celles du jeu du graphe centré, et met en
 // évidence la plage retenue pour ce jeu.
 function syncRangeBar(bar, set) {
@@ -700,7 +734,7 @@ function syncRangeBar(bar, set) {
 
 // Publie la position relative de chaque section ; le CSS en tire l'échelle,
 // la profondeur et l'opacité (transitions fluides pendant le défilement).
-function updateParallax(scroller, rail, bar) {
+function updateParallax(scroller, rail, bar, head) {
   const viewH = scroller.clientHeight || 1;
   const center = scroller.scrollTop + viewH / 2;
   let bestIndex = 0;
@@ -718,6 +752,7 @@ function updateParallax(scroller, rail, bar) {
   for (const dot of rail.children) {
     dot.classList.toggle('active', Number(dot.dataset.index) === bestIndex);
   }
+  syncHeader(head, bestIndex);
   if (bar) syncRangeBar(bar, SLIDES[bestIndex].rangeSet);
 }
 
@@ -730,22 +765,12 @@ function measureSections(scroller) {
   }));
 }
 
-function sectionHtml(slide, index, latest) {
-  const value = latest[slide.id];
-  const p = PARAMS[slide.id];
-  const head =
-    p && value && value.value !== undefined
-      ? `<span class="sec-now">${fmtValue(value.value, p)}<i>${escapeHtml(p.unit)}</i></span>`
-      : '';
+// Le titre n'est pas dans la section : il est rendu par `syncHeader`, au-dessus
+// du conteneur défilant. `aria-label` garde donc le nom du graphe accessible.
+function sectionHtml(slide, index) {
   return `
-    <section class="chart-section" data-index="${index}" data-slide="${slide.id}" style="--pc:${slide.color}">
-      <div class="sec-head">
-        <div>
-          <div class="sec-title">${escapeHtml(slide.label)}</div>
-          <div class="sec-sub">${escapeHtml(slide.sub || '')}</div>
-        </div>
-        ${head}
-      </div>
+    <section class="chart-section" data-index="${index}" data-slide="${slide.id}"
+             style="--pc:${slide.color}" aria-label="${escapeHtml(slide.label)}">
       <div class="sec-body">
         ${slide.panels
           .map(
@@ -763,13 +788,14 @@ function sectionHtml(slide, index, latest) {
 
 export async function renderCharts(el, query) {
   teardown();
-  const latest = await loadLatest().catch(() => ({}));
+  state.latest = await loadLatest().catch(() => ({}));
 
   el.classList.add('view-charts');
   el.innerHTML = `
+    <div class="chart-head" id="chart-head"></div>
     <div class="range-bar" id="range-bar"></div>
     <div class="chart-scroller" id="scroller">
-      ${SLIDES.map((s, i) => sectionHtml(s, i, latest)).join('')}
+      ${SLIDES.map((s, i) => sectionHtml(s, i)).join('')}
     </div>
     <div class="rail" id="rail">
       ${SLIDES.map(
@@ -788,6 +814,7 @@ export async function renderCharts(el, query) {
   const scroller = el.querySelector('#scroller');
   const rail = el.querySelector('#rail');
   const bar = el.querySelector('#range-bar');
+  const head = el.querySelector('#chart-head');
 
   // Changement de plage : ne concerne que le jeu affiché ; les graphes de ce
   // jeu sont remontés, les autres gardent la leur.
@@ -838,7 +865,24 @@ export async function renderCharts(el, query) {
   });
 
   state.markers = await loadMarkers().catch(() => []);
+
+  // L'en-tête et la barre de plages sont vides au premier rendu ; les remplir
+  // les fait grandir (une barre vide ne fait que 20 px, peuplée 52 px), ce qui
+  // raccourcit d'autant le conteneur défilant — et donc les sections, hautes de
+  // 100 %. Mesurer avant le remplissage donnait des positions trop grandes de
+  // ~32 px par section, soit 320 px cumulés au dernier graphe : il ne pouvait
+  // plus être centré et gardait l'en-tête et la barre du précédent.
   measureSections(scroller);
+  updateParallax(scroller, rail, bar, head); // peuple l'en-tête et la barre
+  measureSections(scroller); // hauteurs définitives
+
+  // Toute variation de taille (rotation, titre sur deux lignes, clavier
+  // virtuel…) invalide les positions : on remesure à la source.
+  state.sizeObserver = new ResizeObserver(() => {
+    measureSections(scroller);
+    updateParallax(scroller, rail, bar, head);
+  });
+  state.sizeObserver.observe(scroller);
 
   state.observer = new IntersectionObserver(
     (entries) => {
@@ -858,17 +902,12 @@ export async function renderCharts(el, query) {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
-      updateParallax(scroller, rail, bar);
+      updateParallax(scroller, rail, bar, head);
       ticking = false;
     });
     if (hint && scroller.scrollTop > 40) hint.classList.add('gone');
   };
   scroller.addEventListener('scroll', onScroll, { passive: true });
-  state.onResize = () => {
-    measureSections(scroller);
-    updateParallax(scroller, rail, bar);
-  };
-  window.addEventListener('resize', state.onResize);
 
   // Position initiale : la section demandée par l'Accueil, sinon la première.
   const wanted = SLIDES.findIndex((s) => s.id === query.get('p'));
@@ -876,6 +915,6 @@ export async function renderCharts(el, query) {
     const target = state.sections.find((s) => s.index === wanted);
     if (target) scroller.scrollTop = target.top + target.height / 2 - scroller.clientHeight / 2;
   }
-  updateParallax(scroller, rail, bar);
+  updateParallax(scroller, rail, bar, head);
   await mountSection(state.sections[Math.max(0, wanted)].el);
 }
