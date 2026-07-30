@@ -22,6 +22,7 @@ import {
   fmtValue,
   fmtWhen,
   isoWithOffset,
+  dateInputValue,
   datetimeLocalValue,
 } from '../ui.js';
 import { icon } from '../icons.js';
@@ -517,7 +518,7 @@ function openDeleteMeasureModal(paramId, timestamp, value) {
       <span>
         <b>${escapeHtml(p.label)}</b> ·
         ${fmtValue(value, p)}${p.unit ? ` ${escapeHtml(p.unit)}` : ''}
-        <span class="del-when">${escapeHtml(fmtWhen(timestamp))}</span>
+        <span class="del-when">${escapeHtml(fmtWhen(timestamp, Boolean(p.dayTicks)))}</span>
       </span>
     </div>
     ${
@@ -583,8 +584,8 @@ export function openMeasureModal(onSaved) {
         <select name="form" required>${options}</select>
       </label>
       <div id="value-fields"></div>
-      <label>Date et heure
-        <input type="datetime-local" name="datetime" required value="${datetimeLocalValue(new Date())}">
+      <label>Date du test
+        <input type="date" name="date" required value="${dateInputValue(new Date())}">
       </label>
       <button type="submit" class="btn primary">Enregistrer</button>
     </form>`
@@ -611,7 +612,11 @@ export function openMeasureModal(onSaved) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const choice = MANUAL_FORMS.find((f) => f.id === form.elements.form.value);
-    const when = new Date(form.elements.datetime.value);
+    // Un test manuel n'est daté qu'au jour : on l'horodate à midi, ce qui le
+    // place au milieu de sa journée sur les graphes plutôt qu'à cheval sur une
+    // frontière de jour (et évite tout glissement de date selon le fuseau).
+    const parts = form.elements.date.value.split('-').map(Number);
+    const when = new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0, 0);
     if (Number.isNaN(when.getTime())) {
       toast('Date invalide.', 'error');
       return;

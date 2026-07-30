@@ -11,6 +11,7 @@
 //   data/events.json           → écrit par l'app uniquement
 import { readJson, writeJson } from './github.js';
 import { PARAMS } from './config.js';
+import { isoWithOffset } from './ui.js';
 
 const cache = new Map(); // chemin → { data, ts, immutable }
 
@@ -113,6 +114,25 @@ export async function loadMeasurements(hours) {
   return { series, errors };
 }
 
+// Les tests manuels sont horodatés à midi de leur journée : deux tests du même
+// paramètre le même jour tomberaient donc exactement au même instant, et la
+// suppression — qui cible (paramètre, horodatage) — les emporterait tous les
+// deux. Le second est décalé d'une minute, puis de deux, etc. Aucun affichage
+// ne montre l'heure d'un test manuel : le décalage reste invisible.
+// `entries` est le lot enregistré ensemble (salinité + densité, par exemple) :
+// il doit garder un horodatage commun, donc on cherche un instant libre pour
+// tous ses paramètres à la fois.
+function freeTimestamp(entries, existing) {
+  const wanted = new Set(entries.map((e) => e.parameter));
+  const taken = new Set(
+    existing.filter((m) => wanted.has(m.parameter)).map((m) => Date.parse(m.timestamp))
+  );
+  const when = new Date(Date.parse(entries[0].timestamp));
+  if (!taken.has(when.getTime())) return null;
+  while (taken.has(when.getTime())) when.setMinutes(when.getMinutes() + 1);
+  return isoWithOffset(when);
+}
+
 // Enregistre une ou plusieurs mesures manuelles (même horodatage pour
 // salinité + densité), puis met à jour data/manual/latest.json.
 export async function addManualMeasurements(measurements) {
@@ -125,6 +145,10 @@ export async function addManualMeasurements(measurements) {
 
   for (const [path, entries] of byPath) {
     const existing = (await readJson(path, [])) || [];
+    const shifted = freeTimestamp(entries, existing);
+    if (shifted) {
+      for (const e of entries) e.timestamp = shifted;
+    }
     existing.push(...entries);
     existing.sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
     await writeJson(path, existing, `manuel: ${entries.map((e) => e.parameter).join(', ')} (${entries[0].timestamp})`);
