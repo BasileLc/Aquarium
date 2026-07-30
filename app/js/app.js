@@ -39,7 +39,7 @@ async function route() {
   }
 
   const view = document.getElementById('view');
-  view.classList.remove('view-enter');
+  view.classList.remove('view-enter', 'view-charts');
   view.innerHTML = SKELETON;
   try {
     await routes[name](view, query);
