@@ -6,6 +6,7 @@ import {
   loadMeasurements,
   loadLatest,
   addManualMeasurements,
+  deleteManualMeasurements,
   loadMarkers,
   addMarker,
 } from '../store.js';
@@ -14,6 +15,7 @@ import {
   toast,
   openModal,
   fmtValue,
+  fmtWhen,
   isoWithOffset,
   datetimeLocalValue,
 } from '../ui.js';
@@ -142,6 +144,99 @@ const markerPlugin = {
   },
 };
 
+// Recharge les séries et redessine les graphes déjà montés (après une
+// suppression, sans reconstruire toute la page ni bouger le défilement).
+async function refreshSeries() {
+  const { series } = await loadMeasurements(state.rangeHours);
+  state.series = series;
+  for (const [index, charts] of state.charts) {
+    const slide = SLIDES[index];
+    charts.forEach((chart, panel) => {
+      const ids = slide.panels[panel] || [];
+      ids.forEach((id, i) => {
+        if (chart.data.datasets[i]) chart.data.datasets[i].data = state.series[id] || [];
+      });
+      chart.update();
+      const section = document.querySelector(`.chart-section[data-index="${index}"]`);
+      const empty = section && section.querySelector(`.chart-empty[data-empty="${panel}"]`);
+      if (empty) empty.hidden = ids.some((id) => (state.series[id] || []).length > 0);
+    });
+  }
+}
+
+/**
+ * Clic sur un point : propose de supprimer la mesure — uniquement pour les
+ * tests manuels. Les relevés Apex viennent du poller et se régénéreraient.
+ */
+function openDeleteMeasureModal(paramId, timestamp, value) {
+  const p = PARAMS[paramId];
+  // La salinité et la densité sont saisies ensemble : proposer de retirer les
+  // deux, sinon la « même mesure » resterait à moitié présente.
+  const sibling = MANUAL_FORMS.find(
+    (f) => f.params.length > 1 && f.params.includes(paramId)
+  );
+  const otherId = sibling ? sibling.params.find((id) => id !== paramId) : null;
+
+  const modal = openModal(
+    'Supprimer cette mesure ?',
+    `<div class="del-summary">
+      <span class="del-dot" style="background:${p.color}"></span>
+      <span>
+        <b>${escapeHtml(p.label)}</b> ·
+        ${fmtValue(value, p)}${p.unit ? ` ${escapeHtml(p.unit)}` : ''}
+        <span class="del-when">${escapeHtml(fmtWhen(timestamp))}</span>
+      </span>
+    </div>
+    ${
+      otherId
+        ? `<label class="del-check">
+             <input type="checkbox" id="del-sibling" checked>
+             <span>Supprimer aussi ${escapeHtml(PARAMS[otherId].label)} du même relevé</span>
+           </label>`
+        : ''
+    }
+    <p class="hint">Cette suppression est définitive.</p>
+    <button type="button" class="btn danger" id="del-confirm">${icon('trash', 17)} Supprimer</button>`
+  );
+
+  modal.querySelector('#del-confirm').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    btn.disabled = true;
+    btn.textContent = 'Suppression…';
+    const targets = [{ parameter: paramId, timestamp }];
+    const also = modal.querySelector('#del-sibling');
+    if (otherId && also && also.checked) targets.push({ parameter: otherId, timestamp });
+    try {
+      const removed = await deleteManualMeasurements(targets);
+      modal.close();
+      toast(removed > 1 ? `${removed} mesures supprimées` : 'Mesure supprimée', 'success');
+      await refreshSeries();
+    } catch (err) {
+      toast(err.message, 'error');
+      btn.disabled = false;
+      btn.innerHTML = `${icon('trash', 17)} Supprimer`;
+    }
+  });
+}
+
+// Clic sur le graphe : ne réagit que si l'on touche réellement un point
+// (intersect: true), pour ne jamais viser une mesure éloignée par erreur.
+function handleChartClick(event, chart, paramIds) {
+  const hits = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
+  if (!hits.length) return;
+  const hit = hits[0];
+  const paramId = paramIds[hit.datasetIndex];
+  const p = PARAMS[paramId];
+  if (!p) return;
+  if (p.source !== 'manuel') {
+    toast('Les relevés Apex ne se suppriment pas ici : ils viennent du poller.', 'info');
+    return;
+  }
+  const point = chart.data.datasets[hit.datasetIndex].data[hit.index];
+  if (!point) return;
+  openDeleteMeasureModal(paramId, new Date(point.x).toISOString(), point.y);
+}
+
 function buildPanel(canvas, paramIds) {
   const now = Date.now();
   const min = now - state.rangeHours * 3600 * 1000;
@@ -207,6 +302,12 @@ function buildPanel(canvas, paramIds) {
       parsing: false,
       normalized: true,
       interaction: { mode: 'nearest', axis: 'x', intersect: false },
+      onClick: (event, _elements, chart) => handleChartClick(event, chart, paramIds),
+      onHover: (event, _elements, chart) => {
+        const hits = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
+        const overManual = hits.length && PARAMS[paramIds[hits[0].datasetIndex]]?.source === 'manuel';
+        event.native.target.style.cursor = overManual ? 'pointer' : 'default';
+      },
       layout: { padding: { top: 6, right: 4 } },
       scales: {
         x: {
