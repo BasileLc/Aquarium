@@ -19,5 +19,19 @@
   "unit": "dKH",
   "timestamp": "2026-07-29T12:00:00-04:00",
   "source": "manuel"
+ },
+ "salinity": {
+  "parameter": "salinity",
+  "value": 33.3,
+  "unit": "ppt",
+  "timestamp": "2026-07-29T12:00:00-04:00",
+  "source": "manuel"
+ },
+ "sg": {
+  "parameter": "sg",
+  "value": 1.023,
+  "unit": "sg",
+  "timestamp": "2026-07-29T12:00:00-04:00",
+  "source": "manuel"
  }
 }
