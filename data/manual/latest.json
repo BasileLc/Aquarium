@@ -1,9 +1,9 @@
 {
  "nh3": {
   "parameter": "nh3",
-  "value": 0.9,
+  "value": 0.61,
   "unit": "ppm",
-  "timestamp": "2026-07-29T12:00:00-04:00",
+  "timestamp": "2026-07-30T12:00:00-04:00",
   "source": "manuel"
  },
  "no2": {
