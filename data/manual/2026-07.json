@@ -194,5 +194,12 @@
   "unit": "ppm",
   "timestamp": "2026-07-30T12:00:00-04:00",
   "source": "manuel"
+ },
+ {
+  "parameter": "no2",
+  "value": 0,
+  "unit": "ppb",
+  "timestamp": "2026-07-31T12:00:00-04:00",
+  "source": "manuel"
  }
 ]
