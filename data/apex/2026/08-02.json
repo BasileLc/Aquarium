@@ -3008,5 +3008,40 @@
   "unit": "ppm",
   "timestamp": "2026-08-02T14:10:18-04:00",
   "source": "apex"
+ },
+ {
+  "parameter": "temp",
+  "value": 26.0,
+  "unit": "°C",
+  "timestamp": "2026-08-02T14:20:18-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "ph",
+  "value": 7.71,
+  "unit": "pH",
+  "timestamp": "2026-08-02T14:20:18-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "orp",
+  "value": 204,
+  "unit": "mV",
+  "timestamp": "2026-08-02T14:20:18-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "no3",
+  "value": 9.7,
+  "unit": "ppm",
+  "timestamp": "2026-08-02T14:20:18-04:00",
+  "source": "apex"
+ },
+ {
+  "parameter": "po4",
+  "value": 0.0,
+  "unit": "ppm",
+  "timestamp": "2026-08-02T14:20:18-04:00",
+  "source": "apex"
  }
 ]
