@@ -33,5 +33,12 @@
   "unit": "ppb",
   "timestamp": "2026-08-02T12:01:00-04:00",
   "source": "manuel"
+ },
+ {
+  "parameter": "no2",
+  "value": 500,
+  "unit": "ppb",
+  "timestamp": "2026-08-03T12:00:00-04:00",
+  "source": "manuel"
  }
 ]
