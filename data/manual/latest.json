@@ -8,9 +8,9 @@
  },
  "no2": {
   "parameter": "no2",
-  "value": 500,
+  "value": 1000,
   "unit": "ppb",
-  "timestamp": "2026-08-03T12:00:00-04:00",
+  "timestamp": "2026-08-04T12:00:00-04:00",
   "source": "manuel"
  },
  "alk": {
