@@ -3,35 +3,35 @@
   "parameter": "ph",
   "value": 7.72,
   "unit": "pH",
-  "timestamp": "2026-08-09T13:40:18-04:00",
+  "timestamp": "2026-08-09T13:50:18-04:00",
   "source": "apex"
  },
  "orp": {
   "parameter": "orp",
   "value": 418,
   "unit": "mV",
-  "timestamp": "2026-08-09T13:40:18-04:00",
+  "timestamp": "2026-08-09T13:50:18-04:00",
   "source": "apex"
  },
  "temp": {
   "parameter": "temp",
-  "value": 25.94,
+  "value": 25.89,
   "unit": "°C",
-  "timestamp": "2026-08-09T13:40:18-04:00",
+  "timestamp": "2026-08-09T13:50:18-04:00",
   "source": "apex"
  },
  "no3": {
   "parameter": "no3",
   "value": 60.1,
   "unit": "ppm",
-  "timestamp": "2026-08-09T13:40:18-04:00",
+  "timestamp": "2026-08-09T13:50:18-04:00",
   "source": "apex"
  },
  "po4": {
   "parameter": "po4",
   "value": 0.04,
   "unit": "ppm",
-  "timestamp": "2026-08-09T13:40:18-04:00",
+  "timestamp": "2026-08-09T13:50:18-04:00",
   "source": "apex"
  }
 }
